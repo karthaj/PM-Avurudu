@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>PickMe Avurudu</title>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Mali:wght@600&display=swap');
+	</style>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+	<script type="text/javascript" src="js/boot.js"></script>
+	<script type="text/javascript" src="js/preload.js"></script>
+	<script type="text/javascript" src="js/gametitle.js"></script>
+	<script type="text/javascript" src="js/game1.js"></script>
+	<script type="text/javascript" src="js/game2.js"></script>
+	<script type="text/javascript" src="js/game3.js"></script>
+	<script type="text/javascript" src="js/gameover.js"></script>
+	<script type="text/javascript" src="js/mainMenu.js"></script>
+	<script type="text/javascript" src="js/connection.js"></script>
+
+	<!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+	<!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+
+	<!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+	<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js"></script>
+
+	<!-- Add Firebase products that you want to use -->
+	<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
+
+	<script type="text/javascript">
+		var firebaseConfig = {
+			apiKey: "AIzaSyC_QlUMAi1n4MZehSMTRkSEPvDj_hy2ngA",
+			authDomain: "pickme-avurudu-game-3f969.firebaseapp.com",
+			projectId: "pickme-avurudu-game-3f969",
+			storageBucket: "pickme-avurudu-game-3f969.appspot.com",
+			messagingSenderId: "294814214618",
+			appId: "1:294814214618:web:cf690a81ac1f09bc8a38e3"
+		};
+		// Initialize Firebase
+		firebase.initializeApp(firebaseConfig);
+	</script>
+	<style type="text/css">
+		body {
+			overflow: hidden;
+		}
+
+		.center {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			align-self: center;
+			align-content: center;
+			margin: auto;
+		}
+	</style>
+
+
+
+</head>
+
+<body class="center">
+
+
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+
+
+	<div>
+
+		<script type="text/javascript"> 
+
+			if (localStorage.getItem('pickme-avurudu-game') == 1 && localStorage.getItem('name') != null)
+				(function () {
+
+					//Create a new game that fills the screen
+					game = new Phaser.Game(1280, 900, Phaser.CANVAS);
+					//Add all states
+					game.state.add("Boot", Boot);
+					game.state.add("Preload", Preload);
+					game.state.add("MainMenu", MainMenu);
+					game.state.add("GameOver", GameOver);
+					game.state.add("Game1", Game1);
+					game.state.add("Game3", Game3);
+					game.state.add("Game2", Game2);
+					//Start the first state
+					game.state.start("Boot");
+
+				})();
+			else
+				if (localStorage.getItem('pickme-avurudu-game') != 1) {
+					alert("Please login to play")
+					localStorage.setItem('pickme-avurudu-game', 1)
+					googleSignInPopup(googleProvider());
+
+
+				} else {
+					if (localStorage.getItem('name') == null) {
+						localStorage.setItem('pickme-avurudu-game', 1)
+						googleSignInPopup(googleProvider());
+
+					}
+				}
+
+
+		</script>
+	</div>
+</body>
+
+</html>
