@@ -1,6 +1,6 @@
-var GameOver = function (game, firebase) { };
+var GameOver1 = function (game, firebase) { };
 
-GameOver.prototype = {
+GameOver1.prototype = {
 
 	create: function () {
  
@@ -9,6 +9,8 @@ GameOver.prototype = {
 		this.quit = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 		this.resume = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		
+		var popup = this.game.add.sprite(0,0, "restart");
+
 		this.showScore();
 	},
 
@@ -38,17 +40,17 @@ GameOver.prototype = {
 		this.highScore.align = 'center';
 		this.game.world.bringToTop(this.highScore);
 
-		this.hs = window.localStorage.getItem('HighScore');
+		this.hs = window.localStorage.getItem(g_name);
 
 
 
 		if (this.hs == null) {
 			this.highScore.setText("High score: " + score);
-			window.localStorage.setItem('HighScore', score)
+			window.localStorage.setItem(g_name, score)
 		}
 		else if (parseInt(this.hs) < score) {
 			this.highScore.setText("High score: " + (score));
-			window.localStorage.setItem('HighScore', score)
+			window.localStorage.setItem(g_name, score)
 
 		}
 		else {

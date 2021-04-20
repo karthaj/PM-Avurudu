@@ -2,9 +2,9 @@ var Game1 = function (game, firebase) { };
 
 var score = 0;
 result_title = "Your total meters : ";
+g_name = 'game_1';
 
 Game1.prototype = {
-
 
 	create: function () {
 
@@ -14,6 +14,18 @@ Game1.prototype = {
 		this.obstacleVelocity = -700;
 		this.rate = 1500;
 		score = 0;
+
+		// Sound for the buttons
+		this.click = game.add.audio('click');
+		this.jump = game.add.audio('jump');
+		this.hurt = game.add.audio('hurt');
+		this.cheer = game.add.audio('cheer');
+		var whisile = game.add.audio('whisile');
+		this.cheer.volume = 0.2;
+		this.jump.volume = 0.6;
+		this.bgm = game.add.audio('bgm');
+		this.bgm.volume = 0.5;
+		game.sound.setDecodedCallback([this.click, this.jump, this.hurt, this.cheer, this.whisile, this.bgm], this.addButtons, this);
 
 		this.tileWidth = this.game.cache.getImage('tile').width;
 		this.tileHeight = 100;
@@ -38,18 +50,36 @@ Game1.prototype = {
 		this.boxes.createMultiple(20, 'box');
 		this.game.world.bringToTop(this.floor);
 
+
 		this.jumping = false;
 
 		this.addBase();
 		this.createScore();
 		this.createPlayer();
+		this.addButtons();
 		this.cursors = this.game.input.keyboard.createCursorKeys();
-
 		this.obsPlacer = this.game.time.events.loop(this.rate, this.addObstacles, this);
 		this.game.time.events.loop(100, this.incrementScore, this);
+		this.game.time.events.loop(3700, this.cheers, this);
+		this.game.time.events.loop(38000, this.bgm.play(), this);
+
+		var popup = this.game.add.sprite(0, 0, "popup");
+
+		this.game.input.keyboard.onPressCallback = function (e) {
+			if (game.paused) {
+				popup.destroy();
+				game.paused = false;
+				whisile.play();
+			}
+		};
+
+		this.game.paused = true;
+
+		this.cheers();
 	},
 
 	update: function () {
+
 
 		this.game.physics.arcade.collide(this.player, this.floor);
 
@@ -57,15 +87,18 @@ Game1.prototype = {
 
 		// If the player is only touching the ground let him jump
 		var onTheGround = this.player.body.touching.down;
-		this.bg.autoScroll(this.obstacleVelocity, 10)
+		this.bg.autoScroll(this.obstacleVelocity, 0)
 
 		if (onTheGround && this.cursors.up.isDown && this.alive) {
+			this.jump.play();
 			this.player.body.velocity.y = -1650;
 			this.player.play('jump');
 		}
 		// Crouch!
 		else if (!onTheGround && this.cursors.down.isDown && this.alive) {
 			this.player.body.velocity.y = 1200;
+			this.click.play();
+
 		}
 		else if (onTheGround && this.alive) {
 
@@ -86,9 +119,51 @@ Game1.prototype = {
 			this.obsPlacer.delay = Math.floor(Math.random() * (1000 - 900)) + 900;
 		}
 
+
+
 	},
-	render: function () {
-		// this.game.debug.body(this.player);
+
+	addButtons: function () {
+
+
+		game.add.button(this.game.world.width - 120, 30, 'btn_home',
+			() => {
+				this.bgm.pause(); this.click.play(); this.game.state.start('MainMenu')
+			}, this, 1, 2);
+
+		this.mute = game.add.button(this.game.world.width - 120, 120, 'btn_mute', this.soundIt, this, 1, 2);
+		this.mute.visible = false;
+
+		this.sound = game.add.button(this.game.world.width - 120, 120, 'btn_sound', this.muteIt, this, 1, 2);
+
+	},
+
+	soundIt: function () {
+		this.sound.visible = true;
+		this.mute.visible = false;
+		this.click.play();
+		this.bgm.play();
+	},
+
+	muteIt: function () {
+		this.mute.visible = true;
+		this.sound.visible = false;
+		this.bgm.pause();
+		this.cheer.pause();
+	},
+
+	cheers: function () {
+		this.cheer.play()
+
+	}
+
+	,
+
+	addObstacles: function () {
+		// 	var tilesNeeded = Math.floor( Math.random() * (2 - 0));
+		// 	var gap = Math.floor( Math.random() * (tilesNeeded - 0));
+		this.addBox(this.game.world.width, (this.game.world.height - this.tileHeight) - this.boxHeight);
+		this.obstacleVelocity -= 17;
 
 	},
 
@@ -102,14 +177,6 @@ Game1.prototype = {
 		tile.checkWorldBounds = true;
 		tile.outOfBoundsKill = true;
 		// tile.body.friction.x = 1000;
-
-	},
-
-	addObstacles: function () {
-		// 	var tilesNeeded = Math.floor( Math.random() * (2 - 0));
-		// 	var gap = Math.floor( Math.random() * (tilesNeeded - 0));
-		this.addBox(this.game.world.width, (this.game.world.height - this.tileHeight) - this.boxHeight);
-		this.obstacleVelocity -= 17;
 
 	},
 
@@ -174,12 +241,12 @@ Game1.prototype = {
 		this.highScore.align = 'right';
 		this.game.world.bringToTop(this.highScore);
 
-		if (window.localStorage.getItem('HighScore') == null) {
+		if (window.localStorage.getItem('game_1') == null) {
 			this.highScore.setText(0);
-			window.localStorage.setItem('HighScore', 0);
+			window.localStorage.setItem('game_1', 0);
 		}
 		else {
-			this.highScore.setText(window.localStorage.getItem('HighScore'));
+			this.highScore.setText(window.localStorage.getItem('game_1'));
 		}
 		// this.scoreLabel.bringToTop()
 
@@ -190,25 +257,37 @@ Game1.prototype = {
 			score += 2;
 			this.scoreLabel.setText(score);
 			this.game.world.bringToTop(this.scoreLabel);
-			this.highScore.setText("HS: " + window.localStorage.getItem('HighScore'));
+			// this.highScore.setText("HS: " + window.localStorage.getItem('game_1'));
 			this.game.world.bringToTop(this.highScore);
 		}
 	},
 
 	gameOver: function () {
+		this.cheer.pause()
+		this.bgm.pause()
 
-		this.alive = false;
-		this.postScore();
+		if (this.alive) {
 
-		setTimeout(() => {
-			this.game.state.start('GameOver');
-		}, 400);
+			this.hurt.play();
+			this.alive = false;
+			this.postScore();
+			this.game.state.start('GameOver1');
 
+		}
 	},
 
 	postScore: function () {
-		this.db.collection("pm_user").doc(localStorage.getItem('uid'))
-			.update({ [`games.g_1`]: score });
+		this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
+			if (doc.exists) {
+				const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(score);
+				this.db.collection("pm_user").doc(localStorage.getItem('uid'))
+					.update(
+						{
+							[`games.g_1`]: parseInt(score) + parseInt(doc.data()['games'][`g_1`]),
+							total: _total
+						}
+					);
+			}
+		});
 	}
-
 };
