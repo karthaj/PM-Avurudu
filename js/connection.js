@@ -14,7 +14,8 @@ function googleProvider() {
         // This gives you a Google Access Token. You can use it to access the Google API.
         var token = credential.accessToken; 
 
-        localStorage.setItem("dpURL", result.user.photoURL)
+
+        localStorage.setItem("dpURL", result.user.photoURL) 
         localStorage.setItem("uid", result.user.uid)
         localStorage.setItem("name", result.user.displayName)
         localStorage.setItem("email", result.user.email)

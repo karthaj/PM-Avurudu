@@ -5,7 +5,6 @@ result_title = "Your total meters : ";
 
 Game1.prototype = {
 
-
 	create: function () {
 
 		this.db = firebase.firestore();
@@ -15,13 +14,29 @@ Game1.prototype = {
 		this.rate = 1500;
 		score = 0;
 
+		// Sound for the buttons
+		this.click = game.add.audio('click');
+		this.jump = game.add.audio('jump');
+		this.hurt = game.add.audio('hurt');
+		this.cheer = game.add.audio('cheer');
+		var whisile = game.add.audio('whisile');
+		this.bgm = game.add.audio('bgm');
+		this.cheer.volume = 0.2;
+		this.jump.volume = 0.6;
+		this.bgm.volume = 0.5;
+		game.sound.setDecodedCallback([this.click, this.jump, this.hurt, this.cheer, this.whisile, this.bgm], this.addButtons, this);
+
 		this.tileWidth = this.game.cache.getImage('tile').width;
 		this.tileHeight = 100;
 		this.boxHeight = this.game.cache.getImage('box').height;
 
 		// Images
+
 		this.game.stage.backgroundColor = 'ffe8a3';
 		this.bg = this.add.tileSprite(0, this.game.world.height - 250, 2000, 0, "bg-track");
+		game.add.image(0, 0, "bg-1");
+
+
 		this.sccorePanel = this.add.sprite(0, 0, "top-score-panel");
 		this.sccorePanel.x = 10;
 		this.sccorePanel.y = 10;
@@ -38,18 +53,42 @@ Game1.prototype = {
 		this.boxes.createMultiple(20, 'box');
 		this.game.world.bringToTop(this.floor);
 
+
 		this.jumping = false;
 
 		this.addBase();
 		this.createScore();
 		this.createPlayer();
+		this.addButtons();
 		this.cursors = this.game.input.keyboard.createCursorKeys();
-
 		this.obsPlacer = this.game.time.events.loop(this.rate, this.addObstacles, this);
 		this.game.time.events.loop(100, this.incrementScore, this);
+		this.game.time.events.loop(3700, this.cheers, this);
+		this.game.time.events.loop(38000, this.bgms, this);
+
+		var popup = this.game.add.sprite(0, 0, "popup");
+
+		game.add.sprite(0, this.game.world.height - 204, "bg-1-1");
+
+		this.game.input.keyboard.onPressCallback = function (aa) {
+ 
+			if (aa === " " && game.paused) {
+				popup.destroy();
+				game.paused = false;
+				whisile.play();
+			}
+			else if (aa === "esc" && game.paused) {
+				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
+			}
+		};
+
+		this.game.paused = true;
+
+		this.cheers();
 	},
 
 	update: function () {
+
 
 		this.game.physics.arcade.collide(this.player, this.floor);
 
@@ -57,15 +96,18 @@ Game1.prototype = {
 
 		// If the player is only touching the ground let him jump
 		var onTheGround = this.player.body.touching.down;
-		this.bg.autoScroll(this.obstacleVelocity, 10)
+		this.bg.autoScroll(this.obstacleVelocity, 0)
 
 		if (onTheGround && this.cursors.up.isDown && this.alive) {
+			this.jump.play();
 			this.player.body.velocity.y = -1650;
 			this.player.play('jump');
 		}
 		// Crouch!
 		else if (!onTheGround && this.cursors.down.isDown && this.alive) {
 			this.player.body.velocity.y = 1200;
+			this.click.play();
+
 		}
 		else if (onTheGround && this.alive) {
 
@@ -87,8 +129,57 @@ Game1.prototype = {
 		}
 
 	},
-	render: function () {
-		// this.game.debug.body(this.player);
+
+	addButtons: function () {
+
+		game.add.button(20, 100, 'btn_home',
+			() => {
+				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
+			}, this, 1, 2);
+
+		this.mute = game.add.button(20, 200, 'btn_mute', this.soundIt, this, 1, 0);
+		this.mute.visible = false;
+
+		this.sound = game.add.button(20, 200, 'btn_sound', this.muteIt, this, 1, 0);
+
+	},
+
+	soundIt: function () {
+		this.mute.visible = false;
+		this.sound.visible = true;
+		this.click.play();
+		this.bgm.play();
+	},
+
+	muteIt: function () {
+		this.sound.visible = false;
+		this.mute.visible = true;
+		this.bgm.pause();
+		this.cheer.pause();
+	},
+	bgms: function () {
+		if (this.sound.visible)
+			this.bgm.play()
+		else
+			this.bgm.pause()
+	},
+	stopSounds: function () {
+		this.click.pause();
+		this.cheer.pause();
+		this.bgm.pause();
+	},
+	cheers: function () {
+		if (this.sound.visible && this.alive)
+			this.cheer.play()
+		else
+			this.cheer.pause()
+	},
+
+	addObstacles: function () {
+		// 	var tilesNeeded = Math.floor( Math.random() * (2 - 0));
+		// 	var gap = Math.floor( Math.random() * (tilesNeeded - 0));
+		this.addBox(this.game.world.width, (this.game.world.height - this.tileHeight) - this.boxHeight);
+		this.obstacleVelocity -= 17;
 
 	},
 
@@ -102,14 +193,6 @@ Game1.prototype = {
 		tile.checkWorldBounds = true;
 		tile.outOfBoundsKill = true;
 		// tile.body.friction.x = 1000;
-
-	},
-
-	addObstacles: function () {
-		// 	var tilesNeeded = Math.floor( Math.random() * (2 - 0));
-		// 	var gap = Math.floor( Math.random() * (tilesNeeded - 0));
-		this.addBox(this.game.world.width, (this.game.world.height - this.tileHeight) - this.boxHeight);
-		this.obstacleVelocity -= 17;
 
 	},
 
@@ -140,7 +223,7 @@ Game1.prototype = {
 
 	createPlayer: function () {
 
-		this.player = this.game.add.sprite(this.game.world.width / 5.5, this.game.world.height -
+		this.player = this.game.add.sprite(this.game.world.width / 5, this.game.world.height -
 			this.tileHeight, 'iman');
 		this.player.scale.setTo(1);
 		this.player.anchor.setTo(0.5, 1.0);
@@ -164,24 +247,10 @@ Game1.prototype = {
 
 		var scoreFont = "50px Mali";
 
-		this.scoreLabel = this.game.add.text(400, 55, "0", { font: scoreFont, fill: "#000" });
+		this.scoreLabel = this.game.add.text(250, 55, "0", { font: scoreFont, fill: "#000" });
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
 		this.scoreLabel.align = 'center';
 		this.game.world.bringToTop(this.scoreLabel);
-
-		this.highScore = this.game.add.text(180, 55, "0", { font: scoreFont, fill: "#000" });
-		this.highScore.anchor.setTo(0.5, 0.5);
-		this.highScore.align = 'right';
-		this.game.world.bringToTop(this.highScore);
-
-		if (window.localStorage.getItem('HighScore') == null) {
-			this.highScore.setText(0);
-			window.localStorage.setItem('HighScore', 0);
-		}
-		else {
-			this.highScore.setText(window.localStorage.getItem('HighScore'));
-		}
-		// this.scoreLabel.bringToTop()
 
 	},
 
@@ -190,25 +259,34 @@ Game1.prototype = {
 			score += 2;
 			this.scoreLabel.setText(score);
 			this.game.world.bringToTop(this.scoreLabel);
-			this.highScore.setText("HS: " + window.localStorage.getItem('HighScore'));
-			this.game.world.bringToTop(this.highScore);
 		}
 	},
 
 	gameOver: function () {
+		this.stopSounds();
 
-		this.alive = false;
-		this.postScore();
+		if (this.alive) {
 
-		setTimeout(() => {
-			this.game.state.start('GameOver');
-		}, 400);
+			this.hurt.play();
+			this.alive = false;
+			this.postScore();
+			this.game.state.start('GameOver1');
 
+		}
 	},
 
 	postScore: function () {
-		this.db.collection("pm_user").doc(localStorage.getItem('uid'))
-			.update({ [`games.g_1`]: score });
+		this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
+			if (doc.exists) {
+				const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(score);
+				this.db.collection("pm_user").doc(localStorage.getItem('uid'))
+					.update(
+						{
+							[`games.g_1`]: parseInt(score) + parseInt(doc.data()['games'][`g_1`]),
+							total: _total
+						}
+					);
+			}
+		});
 	}
-
 };
