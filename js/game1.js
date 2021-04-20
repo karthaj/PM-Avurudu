@@ -1,7 +1,6 @@
 var Game1 = function (game, firebase) { };
 
 var score = 0;
-result_title = "Your total meters : ";
 
 Game1.prototype = {
 
@@ -71,7 +70,7 @@ Game1.prototype = {
 		game.add.sprite(0, this.game.world.height - 204, "bg-1-1");
 
 		this.game.input.keyboard.onPressCallback = function (aa) {
- 
+
 			if (aa === " " && game.paused) {
 				popup.destroy();
 				game.paused = false;
