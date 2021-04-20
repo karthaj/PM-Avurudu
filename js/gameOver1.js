@@ -41,7 +41,7 @@ GameOver1.prototype = {
 
 		this.hs = window.localStorage.getItem("game_1");
 
-		if (this.hs == null) {
+		if (this.hs == null || this.hs == "Nan") {
 			this.highScore.setText(score);
 			window.localStorage.setItem("game_1", score)
 		}

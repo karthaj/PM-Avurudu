@@ -1,10 +1,7 @@
 var Game3 = function (game, firebase) { };
 
 var score = 0;
-result_title = "Your total feet : ";
-g_name = 'game_3';
-
-
+ 
 Game3.prototype = {
 
 
@@ -144,6 +141,7 @@ Game3.prototype = {
 	},
 
 	cheers: function () {
+
 		if (this.sound.visible && this.alive)
 			this.cheer.play()
 		else
@@ -209,7 +207,7 @@ Game3.prototype = {
 
 	createScore: function () {
 
-		
+
 		var scoreFont = "50px Mali";
 
 		this.scoreLabel = this.game.add.text(250, 55, "0", { font: scoreFont, fill: "#000" });
@@ -224,19 +222,15 @@ Game3.prototype = {
 			score += 2;
 			this.scoreLabel.setText(score);
 			this.game.world.bringToTop(this.scoreLabel);
-			this.highScore.setText("HS: " + window.localStorage.getItem('game_3'));
-			this.game.world.bringToTop(this.highScore);
 		}
 	},
 
 	gameOver: function () {
-
+		this.stopSounds();
 		this.alive = false;
 		this.player.alpha = .7
 		this.slip.play();
 		this.postScore();
-
-		this.stopSounds();
 
 		setTimeout(() => {
 			this.game.state.start('GameOver3');

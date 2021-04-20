@@ -30,7 +30,7 @@ MainMenu.prototype = {
 		bird.play('crow');
 
 		game.add.image(0, 0, 'menu-fix').scale.setTo(1.02, 1.02);
-		
+
 		game.add.image(this.game.world.centerX - 150, 70, 'logo').scale.setTo(0.7, 0.7);
 
 		this.showMenu();
@@ -126,6 +126,11 @@ MainMenu.prototype = {
 
 					data.push([i++, doc.data()["name"], doc.data()["total"], doc.data()["dp"],]);
 				});
+
+				if (data.length < 3) {
+					alert('Leader board is not ready, Try again later.')
+					return;
+				}
 
 				// this.style = { font: "36px Mali", fill: "#fff", tabs: [150, 500, 80] };
 				// var headings = ["Rank", "Name", "Score"];

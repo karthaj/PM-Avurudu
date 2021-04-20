@@ -2,8 +2,6 @@ var Game2 = function (game, firebase) { };
 
 var tries = 3;
 var score = 0;
-result_title = "Seconds to spot the eye : ";
-g_name = 'game_2';
 
 
 Game2.prototype = {
@@ -15,14 +13,17 @@ Game2.prototype = {
 		this.perc = 1000;
 		this.percx = 140;
 		this.game.stage.backgroundColor = 'ffe8a3';
+		tries = 3;
+		score = 0;
 
 		// Sound for the buttons
 		this.click = game.add.audio('click');
 		this.mark = game.add.audio('mark');
 		this.bgm = game.add.audio('bgm');
 		this.switch = game.add.audio('switch');
+		var whisile = game.add.audio('whisile');
 		this.bgm.volume = 0.5;
-		game.sound.setDecodedCallback([this.click, this.mark, this.bgm, this.switch], this.addButtons, this);
+		game.sound.setDecodedCallback([this.click, this.mark, this.bgm, this.whisile, this.switch], this.addButtons, this);
 
 
 		var bg_t = game.add.image(0, 0, "timeline-bg");
@@ -110,9 +111,9 @@ Game2.prototype = {
 		this.board.x = (this.game.world.width / 10);
 
 		this.boardShake_x = game.add.tween(this.board).to(
-			{ x: (this.game.world.width / 6 * 2) }, 1450, "Sine.easeInOut", true, 0, -1, true);
+			{ x: (this.game.world.width / 6 * 2) }, 945, "Sine.easeInOut", true, 0, -1, true);
 		this.boardShake_y = game.add.tween(this.board).to(
-			{ y: this.board.y + 30 }, 750, "Sine.easeInOut", true, 0, -1, true);
+			{ y: this.board.y + 30 }, 617, "Sine.easeInOut", true, 0, -1, true);
 
 		this.board.inputEnabled = true;
 		this.board.input.pixelPerfectOver = true;
@@ -123,8 +124,7 @@ Game2.prototype = {
 	},
 
 	setEyeMark: function (e) {
-		if (this.alive)
-			this.mark.play();
+
 
 		const x = parseFloat(e.input._pointerData[0].x);
 		const y = parseFloat(e.input._pointerData[0].y);
@@ -134,14 +134,15 @@ Game2.prototype = {
 		const e_y_1 = (this.board.height / 3.5094);
 		const e_y_2 = (this.board.height / 2.8181);
 
-		if ((x > e_x_1 && x < e_x_2) && (y > e_y_1 && y < e_y_2)) {
-
+		if ((x > e_x_1 && x < e_x_2) && (y > e_y_1 && y < e_y_2) && this.alive) {
+			this.mark.play();
 			this.boardShake_y.pause();
 			this.boardShake_x.pause();
 			this.blinder.play('shrink');
 
 			setTimeout(() => {
 				this.blinder.visible = false;
+				score = this.perc;
 				this.gameOver();
 
 			}, 200);
@@ -150,8 +151,9 @@ Game2.prototype = {
 
 		}
 		else {
- 
+
 			if (this.alive) {
+				this.mark.play();
 				this.boardShake_y.resume();
 				this.boardShake_x.resume();
 				cross = this.game.add.sprite((e.position.x + x) - 15, (e.position.y + y) - 15, 'cross');

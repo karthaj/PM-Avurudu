@@ -20,7 +20,7 @@ GameOver2.prototype = {
 			this.restartGame();
 		}, this, 1, 0);
 	this.showScore();
-	
+
 	},
 
 	showScore: function () {
@@ -40,7 +40,7 @@ GameOver2.prototype = {
 
 		this.hs = window.localStorage.getItem("game_2");
 
-		if (this.hs == null) {
+		if (this.hs == null || this.hs == "Nan") {
 			this.highScore.setText(score);
 			window.localStorage.setItem("game_2", score)
 		}
