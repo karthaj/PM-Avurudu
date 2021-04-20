@@ -1,67 +1,59 @@
-var GameOver3 = function (game, firebase) { };
+var GameOver3 = function (game) { };
 
 GameOver3.prototype = {
 
 	create: function () {
- 
+
 		this.game.stage.backgroundColor = '479cde';
 
-		this.quit = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
-		this.resume = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-		
+		game.add.image(0, 0, "game-over");
+
+		game.add.image(0, 0, "game-over");
+
+		this.click = game.add.audio('click');
+		game.sound.setDecodedCallback([this.click], this.showScore, this);
+
 		this.showScore();
 	},
 
-	update: function () {
-
-		if (this.resume.isDown) {
-			this.restartGame();
-		}
-		// if (this.quit.isDown) {
-		// this.quitGame();
-		// }
-
-	},
-	 
 	showScore: function () {
 
-		var scoreFont = "60px Mali";
+		game.add.button(game.world.centerX - 200, 590, 'btn_home', function () {
+			this.click.play();
+			this.game.state.start('MainMenu');
+		}, this, 1, 0);
+		game.add.button(game.world.centerX + 100, 590, 'btn_play', function () {
+			this.click.play();
+			this.restartGame();
+		}, this, 1, 0);
 
-		this.scoreLabel = this.game.add.text(this.game.world.centerX, this.game.world.centerY / 2, "0", { font: scoreFont, fill: "#fff" });
+		var scoreFont = "70px Mali";
+
+		this.scoreLabel = this.game.add.text(830, 450, "0", { font: scoreFont, fill: "#332F26" });
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
-		this.scoreLabel.align = 'center';
+		this.scoreLabel.align = 'left';
 		this.game.world.bringToTop(this.scoreLabel);
-		this.scoreLabel.text = result_title + (score);
+		this.scoreLabel.text = (score);
 
-		this.highScore = this.game.add.text(this.game.world.centerX, this.game.world.centerY, "0", { font: scoreFont, fill: "#fff" });
+		this.highScore = this.game.add.text(830, 560, "0", { font: scoreFont, fill: "#332F26" });
 		this.highScore.anchor.setTo(0.5, 0.5);
-		this.highScore.align = 'center';
+		this.highScore.align = 'left';
 		this.game.world.bringToTop(this.highScore);
 
-		this.hs = window.localStorage.getItem(g_name);
-
-
+		this.hs = window.localStorage.getItem("game_3");
 
 		if (this.hs == null) {
-			this.highScore.setText("High score: " + score);
-			window.localStorage.setItem(g_name, score)
+			this.highScore.setText(score);
+			window.localStorage.setItem("game_3", score)
 		}
 		else if (parseInt(this.hs) < score) {
-			this.highScore.setText("High score: " + (score));
-			window.localStorage.setItem(g_name, score)
+			this.highScore.setText((score));
+			window.localStorage.setItem("game_3", score)
 
 		}
 		else {
-			this.highScore.setText("High score: " + this.hs);
+			this.highScore.setText(this.hs);
 		}
-
-		this.restart = this.game.add.text(this.game.world.centerX
-			, this.game.world.centerY * 1.5
-			, "Press \n Space to retry ", { font: scoreFont, fill: "#fff" });
-		this.restart.anchor.setTo(0.5, 0.5);
-		this.restart.align = 'center';
-		this.game.world.bringToTop(this.restart);
-		// this.scoreLabel.bringToTop()
 
 	},
 

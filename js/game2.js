@@ -20,8 +20,9 @@ Game2.prototype = {
 		this.click = game.add.audio('click');
 		this.mark = game.add.audio('mark');
 		this.bgm = game.add.audio('bgm');
+		this.switch = game.add.audio('switch');
 		this.bgm.volume = 0.5;
-		game.sound.setDecodedCallback([this.click, this.mark, this.bgm], this.addButtons, this);
+		game.sound.setDecodedCallback([this.click, this.mark, this.bgm, this.switch], this.addButtons, this);
 
 
 		var bg_t = game.add.image(0, 0, "timeline-bg");
@@ -49,34 +50,59 @@ Game2.prototype = {
 		this.addButtons();
 
 		this.game.time.events.loop(10, this.decrementerScore, this);
+		this.game.time.events.loop(38000, this.bgm.play(), this);
+
+		var popup = this.game.add.sprite(0, 0, "popup");
+
+		this.game.input.keyboard.onPressCallback = function (aa) {
+
+			if (aa === " " && game.paused) {
+				popup.destroy();
+				game.paused = false;
+				whisile.play();
+			}
+
+			else if (aa === "esc" && game.paused) {
+				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
+			}
+
+		};
+
+		this.game.paused = true;
+
 
 	},
 	addButtons: function () {
-		game.add.button(this.game.world.width - 120, 30, 'btn_home',
-		() => {
-			this.bgm.pause(); this.click.play(); this.game.state.start('MainMenu')
-		}, this, 1, 2);
 
-	this.mute = game.add.button(this.game.world.width - 120, 120, 'btn_mute', this.soundIt, this, 1, 2);
-	this.mute.visible = false;
+		game.add.button(20, 100, 'btn_home',
+			() => {
+				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
+			}, this, 1, 2);
 
-	this.sound = game.add.button(this.game.world.width - 120, 120, 'btn_sound', this.muteIt, this, 1, 2);
+		this.mute = game.add.button(20, 200, 'btn_mute', this.soundIt, this, 1, 0);
+		this.mute.visible = false;
+
+		this.sound = game.add.button(20, 200, 'btn_sound', this.muteIt, this, 1, 0);
 	},
 
 	muteIt: function () {
-		this.mute.visible = true;
 		this.sound.visible = false;
+		this.mute.visible = true;
 		this.click.play();
 		this.bgm.pause();
 	},
 
 	soundIt: function () {
-		this.sound.visible = true;
 		this.mute.visible = false;
+		this.sound.visible = true;
 		this.click.play();
 		this.bgm.play();
 	},
-
+	stopSounds: function () {
+		this.click.pause();
+		this.mark.pause();
+		this.bgm.pause();
+	},
 	createBoard: function () {
 		this.board = game.add.sprite(0, (this.game.world.centerX / 4), 'board');
 
@@ -97,8 +123,8 @@ Game2.prototype = {
 	},
 
 	setEyeMark: function (e) {
-
-		this.mark.play();
+		if (this.alive)
+			this.mark.play();
 
 		const x = parseFloat(e.input._pointerData[0].x);
 		const y = parseFloat(e.input._pointerData[0].y);
@@ -124,20 +150,22 @@ Game2.prototype = {
 
 		}
 		else {
-
-			this.boardShake_y.resume();
-			this.boardShake_x.resume();
-
-			this.cross = this.game.add.sprite((e.position.x + x) - 15, (e.position.y + y) - 15, 'cross');
-			this.cross.scale.setTo(2);
-			this.cross.animations.add('initiate', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 20, false);
-			this.cross.play('initiate');
+ 
+			if (this.alive) {
+				this.boardShake_y.resume();
+				this.boardShake_x.resume();
+				cross = this.game.add.sprite((e.position.x + x) - 15, (e.position.y + y) - 15, 'cross');
+				cross.scale.setTo(2);
+				cross.animations.add('initiate', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 20, false);
+				cross.play('initiate');
+			}
 			tries--;
 
 			if (!(tries < 0))
 				this.chalks.children[tries].alpha = .40;
 
 			if (tries == 0) {
+				this.alive = false;
 				this.blinder.play('shrink');
 				this.boardShake_x.pause();
 				this.boardShake_y.pause();
@@ -178,10 +206,11 @@ Game2.prototype = {
 
 		this.alive = false;
 		this.postScore();
+		this.stopSounds();
 
 		setTimeout(() => {
 			this.game.state.start('GameOver2');
-		}, 2000);
+		}, 1500);
 
 	},
 

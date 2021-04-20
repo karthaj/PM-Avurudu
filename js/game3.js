@@ -51,7 +51,6 @@ Game3.prototype = {
 		this.sccorePanel.x = 10;
 		this.sccorePanel.y = 10;
 
-
 		this.jumping = false;
 
 		this.createScore();
@@ -60,17 +59,22 @@ Game3.prototype = {
 		this.cursors = this.game.input.keyboard.createCursorKeys();
 
 		var gapX = this.game.cache.getImage('popup').width;
-		var popup = this.game.add.sprite(this.game.world.centerX - (gapX / 2), 150, "popup");
+		var popup = this.game.add.sprite(this.game.world.centerX - (gapX / 2), 0, "popup");
 
 
 		this.obsPlacer = this.game.time.events.loop(this.rate, this.addObstacles, this);
 		this.game.time.events.loop(100, this.incrementScore, this);
 		this.game.time.events.loop(3700, this.cheers, this);
+		this.game.time.events.loop(38000, this.bgms, this);
 
-		this.game.input.keyboard.onPressCallback = function (e) {
-			if (game.paused) {
+
+		this.game.input.keyboard.onPressCallback = function (aa) {
+			if (aa === " " && game.paused) {
 				popup.destroy();
 				game.paused = false; whisile.play();
+			}
+			else if (aa === "esc" && game.paused) {
+				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
 			}
 		};
 		this.game.paused = true;
@@ -105,38 +109,51 @@ Game3.prototype = {
 
 	addButtons: function () {
 
-		game.add.button(this.game.world.width - 120, 30, 'btn_home',
+		game.add.button(20, 100, 'btn_home',
 			() => {
-				this.bgm.pause(); this.click.play(); this.game.state.start('MainMenu')
+				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
 			}, this, 1, 2);
 
-		this.mute = game.add.button(this.game.world.width - 120, 120, 'btn_mute', this.soundIt, this, 1, 2);
+		this.mute = game.add.button(20, 200, 'btn_mute', this.soundIt, this, 1, 0);
 		this.mute.visible = false;
 
-		this.sound = game.add.button(this.game.world.width - 120, 120, 'btn_sound', this.muteIt, this, 1, 2);
+		this.sound = game.add.button(20, 200, 'btn_sound', this.muteIt, this, 1, 0);
+
 	},
 
-
-
 	muteIt: function () {
-		this.mute.visible = true;
 		this.sound.visible = false;
+		this.mute.visible = true;
 		this.bgm.pause();
+		this.cheer.pause();
 
 	},
 
 	soundIt: function () {
-		this.sound.visible = true;
 		this.mute.visible = false;
+		this.sound.visible = true;
 		this.bgm.play();
 		this.click.play();
 	},
 
-
-	cheers: function () {
-		this.cheer.play()
+	bgms: function () {
+		if (this.sound.visible)
+			this.bgm.play()
+		else
+			this.bgm.pause()
 	},
 
+	cheers: function () {
+		if (this.sound.visible && this.alive)
+			this.cheer.play()
+		else
+			this.cheer.pause()
+	},
+	stopSounds: function () {
+		this.click.pause();
+		this.cheer.pause();
+		this.bgm.pause();
+	},
 	addBox: function (x, y) {
 
 		var tile = this.boxes.getFirstDead();
@@ -192,26 +209,13 @@ Game3.prototype = {
 
 	createScore: function () {
 
+		
 		var scoreFont = "50px Mali";
 
-		this.scoreLabel = this.game.add.text(400, 55, "0", { font: scoreFont, fill: "#000" });
+		this.scoreLabel = this.game.add.text(250, 55, "0", { font: scoreFont, fill: "#000" });
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
 		this.scoreLabel.align = 'center';
 		this.game.world.bringToTop(this.scoreLabel);
-
-		this.highScore = this.game.add.text(180, 55, "0", { font: scoreFont, fill: "#000" });
-		this.highScore.anchor.setTo(0.5, 0.5);
-		this.highScore.align = 'right';
-		this.game.world.bringToTop(this.highScore);
-
-		if (window.localStorage.getItem('game_3') == null) {
-			this.highScore.setText(0);
-			window.localStorage.setItem('game_3', 0);
-		}
-		else {
-			this.highScore.setText(window.localStorage.getItem('game_3'));
-		}
-		// this.scoreLabel.bringToTop()
 
 	},
 
@@ -231,6 +235,8 @@ Game3.prototype = {
 		this.player.alpha = .7
 		this.slip.play();
 		this.postScore();
+
+		this.stopSounds();
 
 		setTimeout(() => {
 			this.game.state.start('GameOver3');

@@ -30,6 +30,8 @@ MainMenu.prototype = {
 		bird.play('crow');
 
 		game.add.image(0, 0, 'menu-fix').scale.setTo(1.02, 1.02);
+		
+		game.add.image(this.game.world.centerX - 150, 70, 'logo').scale.setTo(0.7, 0.7);
 
 		this.showMenu();
 		this.addButtons();
@@ -43,36 +45,37 @@ MainMenu.prototype = {
 
 		this.open.play();
 
-		var scoreFont = "35px Mali";
+		var scoreFont = "25px Mali";
 
-		this.scoreLabel = this.game.add.text(this.game.world.centerX, this.game.world.height - 60, "", { font: scoreFont, fill: "#000" });
+		this.scoreLabel = this.game.add.text(this.game.world.centerX, this.game.world.height / 2.355, "", { font: scoreFont, fill: "#4f3e00" });
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
 		this.scoreLabel.align = 'center';
 		this.game.world.bringToTop(this.scoreLabel);
 
-		this.greetText = this.game.add.text(this.game.world.centerX, this.game.world.height / 12, "", { font: scoreFont, fill: "#000" });
+		this.greetText = this.game.add.text(this.game.world.centerX, this.game.world.height / 2.9, "", { font: scoreFont, fill: "#000" });
 		this.greetText.anchor.setTo(0.5, 0.5);
 		this.greetText.align = 'center';
 		this.game.world.bringToTop(this.greetText);
 
-		this.greetText.text = "Happy new year " + NAME;
+		this.greetText.text = "සුභ අලුත් අවුරුද්දක් වේවා!\n" + NAME;
 		this.scoreLabel.text = "Your score is " + (window.localStorage.getItem('overall_score') == null ? 0 : window.localStorage.getItem('overall_score'));
 
-		game.add.button(game.world.centerX - 200, this.game.world.height / 6 + 105, 'btn_obstacle', this.startGame1, this, 0, 1, 2);
-		game.add.button(game.world.centerX - 200, this.game.world.height / 6 + 205, 'btn_elephant', this.startGame2, this, 0, 1, 2);
-		game.add.button(game.world.centerX - 200, this.game.world.height / 6 + 305, 'btn_grease', this.startGame3, this, 0, 1, 2);
-		game.add.button(game.world.centerX - 200, this.game.world.height / 6 + 455, 'btn_leader_board', this.populateBoard, this, 0, 1, 2);
+		game.add.button(game.world.centerX - 150, this.game.world.height / 2.75 + 85, 'btn_obstacle', this.startGame1, this, 1, 0);
+		game.add.button(game.world.centerX - 170, this.game.world.height / 2.75 + 160, 'btn_elephant', this.startGame2, this, 1, 0);
+		game.add.button(game.world.centerX - 150, this.game.world.height / 2.75 + 240, 'btn_grease', this.startGame3, this, 1, 0);
+		game.add.button(game.world.centerX - 125, this.game.world.height / 2.75 + 320, 'btn_leader_board', this.populateBoard, this, 1, 0);
 
 		this.scoreLabel.bringToTop();
 
 	},
 
+
 	addButtons: function () {
 
 
-		this.mute = game.add.button(10, 220, 'btn_mute', this.soundIt, this, 1, 0);
+		this.mute = game.add.button(10, 175, 'btn_mute', this.soundIt, this, 1, 0);
 		this.mute.visible = false;
-		this.sound = game.add.button(10, 220, 'btn_sound', this.muteIt, this, 1, 0);
+		this.sound = game.add.button(10, 175, 'btn_sound', this.muteIt, this, 1, 0);
 
 	},
 

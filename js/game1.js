@@ -2,7 +2,6 @@ var Game1 = function (game, firebase) { };
 
 var score = 0;
 result_title = "Your total meters : ";
-g_name = 'game_1';
 
 Game1.prototype = {
 
@@ -21,9 +20,9 @@ Game1.prototype = {
 		this.hurt = game.add.audio('hurt');
 		this.cheer = game.add.audio('cheer');
 		var whisile = game.add.audio('whisile');
+		this.bgm = game.add.audio('bgm');
 		this.cheer.volume = 0.2;
 		this.jump.volume = 0.6;
-		this.bgm = game.add.audio('bgm');
 		this.bgm.volume = 0.5;
 		game.sound.setDecodedCallback([this.click, this.jump, this.hurt, this.cheer, this.whisile, this.bgm], this.addButtons, this);
 
@@ -32,8 +31,12 @@ Game1.prototype = {
 		this.boxHeight = this.game.cache.getImage('box').height;
 
 		// Images
+
 		this.game.stage.backgroundColor = 'ffe8a3';
 		this.bg = this.add.tileSprite(0, this.game.world.height - 250, 2000, 0, "bg-track");
+		game.add.image(0, 0, "bg-1");
+
+
 		this.sccorePanel = this.add.sprite(0, 0, "top-score-panel");
 		this.sccorePanel.x = 10;
 		this.sccorePanel.y = 10;
@@ -61,15 +64,21 @@ Game1.prototype = {
 		this.obsPlacer = this.game.time.events.loop(this.rate, this.addObstacles, this);
 		this.game.time.events.loop(100, this.incrementScore, this);
 		this.game.time.events.loop(3700, this.cheers, this);
-		this.game.time.events.loop(38000, this.bgm.play(), this);
+		this.game.time.events.loop(38000, this.bgms, this);
 
 		var popup = this.game.add.sprite(0, 0, "popup");
 
-		this.game.input.keyboard.onPressCallback = function (e) {
-			if (game.paused) {
+		game.add.sprite(0, this.game.world.height - 204, "bg-1-1");
+
+		this.game.input.keyboard.onPressCallback = function (aa) {
+ 
+			if (aa === " " && game.paused) {
 				popup.destroy();
 				game.paused = false;
 				whisile.play();
+			}
+			else if (aa === "esc" && game.paused) {
+				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
 			}
 		};
 
@@ -119,45 +128,52 @@ Game1.prototype = {
 			this.obsPlacer.delay = Math.floor(Math.random() * (1000 - 900)) + 900;
 		}
 
-
-
 	},
 
 	addButtons: function () {
 
-
-		game.add.button(this.game.world.width - 120, 30, 'btn_home',
+		game.add.button(20, 100, 'btn_home',
 			() => {
-				this.bgm.pause(); this.click.play(); this.game.state.start('MainMenu')
+				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
 			}, this, 1, 2);
 
-		this.mute = game.add.button(this.game.world.width - 120, 120, 'btn_mute', this.soundIt, this, 1, 2);
+		this.mute = game.add.button(20, 200, 'btn_mute', this.soundIt, this, 1, 0);
 		this.mute.visible = false;
 
-		this.sound = game.add.button(this.game.world.width - 120, 120, 'btn_sound', this.muteIt, this, 1, 2);
+		this.sound = game.add.button(20, 200, 'btn_sound', this.muteIt, this, 1, 0);
 
 	},
 
 	soundIt: function () {
-		this.sound.visible = true;
 		this.mute.visible = false;
+		this.sound.visible = true;
 		this.click.play();
 		this.bgm.play();
 	},
 
 	muteIt: function () {
-		this.mute.visible = true;
 		this.sound.visible = false;
+		this.mute.visible = true;
 		this.bgm.pause();
 		this.cheer.pause();
 	},
-
+	bgms: function () {
+		if (this.sound.visible)
+			this.bgm.play()
+		else
+			this.bgm.pause()
+	},
+	stopSounds: function () {
+		this.click.pause();
+		this.cheer.pause();
+		this.bgm.pause();
+	},
 	cheers: function () {
-		this.cheer.play()
-
-	}
-
-	,
+		if (this.sound.visible && this.alive)
+			this.cheer.play()
+		else
+			this.cheer.pause()
+	},
 
 	addObstacles: function () {
 		// 	var tilesNeeded = Math.floor( Math.random() * (2 - 0));
@@ -207,7 +223,7 @@ Game1.prototype = {
 
 	createPlayer: function () {
 
-		this.player = this.game.add.sprite(this.game.world.width / 5.5, this.game.world.height -
+		this.player = this.game.add.sprite(this.game.world.width / 5, this.game.world.height -
 			this.tileHeight, 'iman');
 		this.player.scale.setTo(1);
 		this.player.anchor.setTo(0.5, 1.0);
@@ -231,24 +247,10 @@ Game1.prototype = {
 
 		var scoreFont = "50px Mali";
 
-		this.scoreLabel = this.game.add.text(400, 55, "0", { font: scoreFont, fill: "#000" });
+		this.scoreLabel = this.game.add.text(250, 55, "0", { font: scoreFont, fill: "#000" });
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
 		this.scoreLabel.align = 'center';
 		this.game.world.bringToTop(this.scoreLabel);
-
-		this.highScore = this.game.add.text(180, 55, "0", { font: scoreFont, fill: "#000" });
-		this.highScore.anchor.setTo(0.5, 0.5);
-		this.highScore.align = 'right';
-		this.game.world.bringToTop(this.highScore);
-
-		if (window.localStorage.getItem('game_1') == null) {
-			this.highScore.setText(0);
-			window.localStorage.setItem('game_1', 0);
-		}
-		else {
-			this.highScore.setText(window.localStorage.getItem('game_1'));
-		}
-		// this.scoreLabel.bringToTop()
 
 	},
 
@@ -257,14 +259,11 @@ Game1.prototype = {
 			score += 2;
 			this.scoreLabel.setText(score);
 			this.game.world.bringToTop(this.scoreLabel);
-			// this.highScore.setText("HS: " + window.localStorage.getItem('game_1'));
-			this.game.world.bringToTop(this.highScore);
 		}
 	},
 
 	gameOver: function () {
-		this.cheer.pause()
-		this.bgm.pause()
+		this.stopSounds();
 
 		if (this.alive) {
 
