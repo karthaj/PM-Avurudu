@@ -23,18 +23,18 @@ Game1.prototype = {
 		this.cheer.volume = 0.2;
 		this.jump.volume = 0.6;
 		this.bgm.volume = 0.5;
-		game.sound.setDecodedCallback([this.click, this.jump, this.hurt, this.cheer, this.whisile, this.bgm], this.addButtons, this);
-
-		this.tileWidth = this.game.cache.getImage('tile').width;
-		this.tileHeight = 100;
-		this.boxHeight = this.game.cache.getImage('box').height;
+		this.tileWidth = 1;
+		this.tileHeight = 150;
+		this.boxHeight = this.game.cache.getImage('rock-1').height;
 
 		// Images
 
 		this.game.stage.backgroundColor = 'ffe8a3';
 		this.bg = this.add.tileSprite(0, this.game.world.height - 250, 2000, 0, "bg-track");
-		game.add.image(0, 0, "bg-1");
+		var _ = game.add.image(0, 0, "bg-1");
 
+		game.add.tween(_).to(
+			{ y: 3, x: 3 }, 945, "Sine.easeInOut", true, 0, -1, true);
 
 		this.sccorePanel = this.add.sprite(0, 0, "top-score-panel");
 		this.sccorePanel.x = 10;
@@ -47,9 +47,8 @@ Game1.prototype = {
 		this.floor.createMultiple(Math.ceil(this.game.world.width / this.tileWidth));
 
 		this.boxes = this.game.add.group();
-
 		this.boxes.enableBody = true;
-		this.boxes.createMultiple(20, 'box');
+		this.boxes.createMultiple(20, 'rock-2');
 		this.game.world.bringToTop(this.floor);
 
 
@@ -65,25 +64,12 @@ Game1.prototype = {
 		this.game.time.events.loop(3700, this.cheers, this);
 		this.game.time.events.loop(38000, this.bgms, this);
 
-		var popup = this.game.add.sprite(0, 0, "popup");
-
 		game.add.sprite(0, this.game.world.height - 204, "bg-1-1");
 
-		this.game.input.keyboard.onPressCallback = function (aa) {
-
-			if (aa === " " && game.paused) {
-				popup.destroy();
-				game.paused = false;
-				whisile.play();
-			}
-			else if (aa === "esc" && game.paused) {
-				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
-			}
-		};
-
-		this.game.paused = true;
+		whisile.play();
 
 		this.cheers();
+
 	},
 
 	update: function () {
@@ -99,7 +85,7 @@ Game1.prototype = {
 
 		if (onTheGround && this.cursors.up.isDown && this.alive) {
 			this.jump.play();
-			this.player.body.velocity.y = -1650;
+			this.player.body.velocity.y = -2050;
 			this.player.play('jump');
 		}
 		// Crouch!
@@ -126,6 +112,7 @@ Game1.prototype = {
 		else if (score > 500) {
 			this.obsPlacer.delay = Math.floor(Math.random() * (1000 - 900)) + 900;
 		}
+		game.debug.body(this.boxes)
 
 	},
 
@@ -156,17 +143,20 @@ Game1.prototype = {
 		this.bgm.pause();
 		this.cheer.pause();
 	},
+
 	bgms: function () {
 		if (this.sound.visible)
 			this.bgm.play()
 		else
 			this.bgm.pause()
 	},
+
 	stopSounds: function () {
 		this.click.pause();
 		this.cheer.pause();
 		this.bgm.pause();
 	},
+
 	cheers: function () {
 		if (this.sound.visible && this.alive)
 			this.cheer.play()
@@ -178,7 +168,7 @@ Game1.prototype = {
 		// 	var tilesNeeded = Math.floor( Math.random() * (2 - 0));
 		// 	var gap = Math.floor( Math.random() * (tilesNeeded - 0));
 		this.addBox(this.game.world.width, (this.game.world.height - this.tileHeight) - this.boxHeight);
-		this.obstacleVelocity -= 17;
+		this.obstacleVelocity -= 10;
 
 	},
 
@@ -191,8 +181,9 @@ Game1.prototype = {
 		tile.body.immovable = true;
 		tile.checkWorldBounds = true;
 		tile.outOfBoundsKill = true;
-		// tile.body.friction.x = 1000;
-
+		tile.body.width = 100;
+		tile.loadTexture(Math.floor(Math.random() * (2 - 1 + 1) + 1) == 1 ? 'rock-1' : 'rock-2');
+		tile.body.setCircle(20);
 	},
 
 	addTile: function (x, y) {
@@ -204,7 +195,8 @@ Game1.prototype = {
 		tile.body.immovable = true;
 		tile.checkWorldBounds = true;
 		tile.outOfBoundsKill = true;
-		// tile.body.friction.x = 1000;
+
+
 	},
 
 	addBase: function () {
@@ -217,36 +209,33 @@ Game1.prototype = {
 
 		}
 	},
-
-
-
+ 
 	createPlayer: function () {
 
-		this.player = this.game.add.sprite(this.game.world.width / 5, this.game.world.height -
-			this.tileHeight, 'iman');
-		this.player.scale.setTo(1);
+		this.player = this.game.add.sprite(this.game.world.width / 5.5, this.game.world.height -
+			this.tileHeight, 'imang-goni');
+		this.player.scale.setTo(1.3,1.4);
 		this.player.anchor.setTo(0.5, 1.0);
 		this.game.physics.arcade.enable(this.player);
 		this.player.body.gravity.y = 8200;
 		this.player.body.collideWorldBounds = true;
 		this.player.body.bounce.y = 0.1;
 		this.player.body.width = 30;
+		this.player.body.offset.x = 40;
 
-		this.player.animations.add('jog', [5, 4, 3, 2, 1, 0], 10, true);
-		this.player.animations.add('jump', [6, 7, 8, 9, 10, 11], 10, true);
-		this.player.animations.add('hurt', [12, 13, 14, 15, 16, 17], 10, true);
-
+		this.player.animations.add('jog', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 23, true);
+		this.player.animations.add('jump', [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,], 18, true);
+		this.player.animations.add('hurt', [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41], 30, true);
 
 		this.player.play('hurt');
-
-
 	},
 
 	createScore: function () {
 
 		var scoreFont = "50px Mali";
 
-		this.scoreLabel = this.game.add.text(250, 55, "0", { font: scoreFont, fill: "#000" });
+		this.scoreLabel = this.game.add.text(300, 55, "0", { font: scoreFont, fill: "#000" });
+		this.game.add.text(150, 55, "ft", { font: scoreFont, fill: "#000" }).anchor.setTo(0.5, 0.5);
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
 		this.scoreLabel.align = 'center';
 		this.game.world.bringToTop(this.scoreLabel);
@@ -255,7 +244,7 @@ Game1.prototype = {
 
 	incrementScore: function () {
 		if (this.alive) {
-			score += 2;
+			score += 1;
 			this.scoreLabel.setText(score);
 			this.game.world.bringToTop(this.scoreLabel);
 		}
@@ -274,18 +263,24 @@ Game1.prototype = {
 		}
 	},
 
+
+
 	postScore: function () {
-		this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
-			if (doc.exists) {
-				const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(score);
-				this.db.collection("pm_user").doc(localStorage.getItem('uid'))
-					.update(
-						{
-							[`games.g_1`]: parseInt(score) + parseInt(doc.data()['games'][`g_1`]),
-							total: _total
-						}
-					);
-			}
-		});
+		if (window.localStorage.getItem("uid") != null) {
+			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
+				if (doc.exists) {
+					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(score);
+					this.db.collection("pm_user").doc(localStorage.getItem('uid'))
+						.update(
+							{
+								[`games.g_1`]: parseInt(score) + parseInt(doc.data()['games'][`g_1`]),
+								total: _total
+							}
+						);
+				}
+			});
+		} else {
+			window.location.reload();
+		}
 	}
 };

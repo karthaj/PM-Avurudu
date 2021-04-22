@@ -6,7 +6,7 @@ Boot.prototype = {
 
 	preload: function () {
 		this.game.load.spritesheet('loading', '/assets/components/loading.png', 199, 199);
-	
+
 	},
 
 	create: function () {
@@ -38,11 +38,9 @@ Boot.prototype = {
 				for (let i = 1; i < 4; i++) {
 					const v = parseInt(doc.data()['games'][`g_${i}`]);
 					tScore += v;
-					window.localStorage.setItem(`game_${i}`, v);
 				}
 
 				window.localStorage.setItem(`overall_score`, tScore);
-
 
 				this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 				this.game.state.start("Preload");
@@ -63,10 +61,13 @@ Boot.prototype = {
 					}, total: 0
 				};
 
-				firebase.firestore().collection("pm_user").doc(window.localStorage.getItem('uid')).set(userDate).then(e => this.scoreLabel.text = "Finnishing up . . .");
-
+				if (window.localStorage.getItem("uid") != null) {
+					firebase.firestore().collection("pm_user").doc(window.localStorage.getItem('uid')).set(userDate).then(e => this.scoreLabel.text = "Finnishing up . . .");
+				} else {
+					window.location.reload();
+				}
+				
 				setTimeout(() => {
-					this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 					this.game.state.start("Preload");
 				}, 1500);
 			}
