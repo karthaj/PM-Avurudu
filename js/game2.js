@@ -35,9 +35,12 @@ Game2.prototype = {
 		this.chalks = this.game.add.group();
 		this.chalks.createMultiple(3, 'chalk');
 
+
 		this.chalks.children[0].reset(this.game.world.centerX - 100, bg_t.position.y + 50);
 		this.chalks.children[1].reset(this.game.world.centerX, bg_t.position.y + 50);
 		this.chalks.children[2].reset(this.game.world.centerX + 100, bg_t.position.y + 50);
+
+
 
 		// Board 
 		this.createBoard();
@@ -95,15 +98,15 @@ Game2.prototype = {
 		this.bgm.pause();
 	},
 	createBoard: function () {
-		this.board = game.add.sprite(0, (this.game.world.centerX / 4), 'board');
+		this.board = game.add.sprite(Math.floor(Math.random() * (50 - 1 + 1) + 0), 200, 'board');
 
 		this.board.scale.setTo(1.5);
-		this.board.x = (this.game.world.width / 10);
+		this.board.x = (this.game.world.width / Math.floor(Math.random() * (7 - 1 + 1) + 2));
 
 		this.boardShake_x = game.add.tween(this.board).to(
-			{ x: (this.game.world.width / 6 * 2) }, 945, "Sine.easeInOut", true, 0, -1, true);
+			{ rotation: 0.05, x: (this.game.world.centerX / Math.floor(Math.random() * (8 - 1 + 1) + 2) * 2) }, Math.floor(Math.random() * (745 - 1 + 1) + 596), "Sine.easeInOut", true, 0, -1, true);
 		this.boardShake_y = game.add.tween(this.board).to(
-			{ y: this.board.y + 30 }, 617, "Sine.easeInOut", true, 0, -1, true);
+			{ rotation: 0.099, y: this.board.y + Math.floor(Math.random() * (20 - 1 + 1) + 10) }, Math.floor(Math.random() * (517 - 1 + 1) + 421), "Sine.easeInOut", true, 0, -1, true);
 
 		this.board.inputEnabled = true;
 		this.board.input.pixelPerfectOver = true;
@@ -198,8 +201,7 @@ Game2.prototype = {
 
 		this.alive = false;
 		this.postScore();
-		this.stopSounds();
-
+		this.stopSounds(); 
 		setTimeout(() => {
 			this.game.state.start('GameOver2');
 		}, 1500);
@@ -210,16 +212,14 @@ Game2.prototype = {
 		if (window.localStorage.getItem("uid") != null) {
 			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
 				if (doc.exists) {
-					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(this.perc)
+					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(this.perc / 2)
 					this.db.collection("pm_user").doc(localStorage.getItem('uid'))
 						.update(
 							{
-								[`games.g_2`]: parseInt(score) + parseInt(doc.data()['games'][`g_2`]),
+								[`games.g_2`]: parseInt(score/2) + parseInt(doc.data()['games'][`g_2`]),
 								total: _total
 							}
 						);
-					window.localStorage.getItem('overall_score', _total)
-
 				}
 			}).catch((err) => {
 				console.log(err);

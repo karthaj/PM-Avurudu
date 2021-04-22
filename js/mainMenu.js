@@ -37,11 +37,14 @@ MainMenu.prototype = {
 		this.addButtons();
 
 		this.game.time.events.loop(38000, this.bgms, this);
+		this.game.time.events.loop(5000, this.setScore, this);
 		this.bgms();
 	},
 
-
-
+	setScore: function () {
+		this.scoreLabel.text = "Your ⭐ is " + (window.localStorage.getItem('overall_score') == null ? 0 : parseInt(window.localStorage.getItem('overall_score') / 100));
+	}
+	,
 
 	showMenu: function () {
 
@@ -55,7 +58,7 @@ MainMenu.prototype = {
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
 		this.scoreLabel.align = 'center';
 		this.game.world.bringToTop(this.scoreLabel);
-
+		 
 		this.greetText = this.game.add.text(this.game.world.centerX, this.game.world.height / 2.9, "", { font: scoreFont, fill: "#000" });
 		this.greetText.anchor.setTo(0.5, 0.5);
 		this.greetText.align = 'center';
@@ -70,10 +73,10 @@ MainMenu.prototype = {
 		game.add.button(game.world.centerX - 125, this.game.world.height / 2.75 + 320, 'btn_leader_board', this.populateBoard, this, 1, 0, 0).scale.setTo(0.75);
 
 		this.scoreLabel.bringToTop();
-
+		this.alive = true;
 	},
 	bgms: function () {
-		if (this.sound.visible)
+		if (this.sound.visible && this.alive)
 			this.bgm.play();
 		else
 			this.bgm.pause();
@@ -110,6 +113,7 @@ MainMenu.prototype = {
 
 
 	cxx: function () {
+		this.alive = false;
 		this.click.play();
 		this.bgm.pause();
 
@@ -136,18 +140,18 @@ MainMenu.prototype = {
 					querySnapshot.forEach((doc) => {
 						if (doc.id == UID && i > 3) {
 							console.log(doc.data()["uid"]);
-							profile = [i, doc.data()["name"], parseInt(doc.data()["total"]/100), doc.data()["dp"],];
+							profile = [i, doc.data()["name"], parseInt(doc.data()["total"] / 100), doc.data()["dp"],];
 						}
 
-						data.push([i++, doc.data()["name"], parseInt(doc.data()["total"]/100 ), doc.data()["dp"],]);
+						data.push([i++, doc.data()["name"], parseInt(doc.data()["total"] / 100), doc.data()["dp"],]);
 					});
 
 					if (data.length < 3) {
-						alert('Leader board is not ready, Try again later.') 
+						alert('Leader board is not ready, Try again later.')
 						return;
 					}
 
-					var split = (e)=>e.split(' ')[0]
+					var split = (e) => e.split(' ')[0]
 
 					document.getElementById("top-ranks").innerHTML =
 						`<div class="col-4 text-center">
