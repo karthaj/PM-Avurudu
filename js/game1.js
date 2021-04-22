@@ -209,12 +209,12 @@ Game1.prototype = {
 
 		}
 	},
- 
+
 	createPlayer: function () {
 
 		this.player = this.game.add.sprite(this.game.world.width / 5.5, this.game.world.height -
 			this.tileHeight, 'imang-goni');
-		this.player.scale.setTo(1.3,1.4);
+		this.player.scale.setTo(1.3, 1.2);
 		this.player.anchor.setTo(0.5, 1.0);
 		this.game.physics.arcade.enable(this.player);
 		this.player.body.gravity.y = 8200;
@@ -278,6 +278,11 @@ Game1.prototype = {
 							}
 						);
 				}
+			}).catch((err) => {
+				console.log(err);
+				alert("Something seems off. Please reload.");
+				window.location.reload();
+
 			});
 		} else {
 			window.location.reload();

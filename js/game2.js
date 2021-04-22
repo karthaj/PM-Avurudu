@@ -13,6 +13,7 @@ Game2.prototype = {
 		this.perc = 1000;
 		this.percx = 140;
 		this.game.stage.backgroundColor = 'ffe8a3';
+		this.game.add.image(0, 0, 'bg-aliya');
 		tries = 3;
 		score = 0;
 
@@ -22,7 +23,7 @@ Game2.prototype = {
 		this.bgm = game.add.audio('bgm');
 		this.switch = game.add.audio('switch');
 		var whisile = game.add.audio('whisile');
-		this.bgm.volume = 0.5; 
+		this.bgm.volume = 0.5;
 
 		var bg_t = game.add.image(0, 0, "timeline-bg");
 		this.progress = game.add.image(0, 0, "timeline");
@@ -51,7 +52,7 @@ Game2.prototype = {
 		this.game.time.events.loop(10, this.decrementerScore, this);
 		this.game.time.events.loop(38000, this.bgms, this);
 
-		whisile.play(); 
+		whisile.play();
 		this.bgm.play();
 
 	},
@@ -218,6 +219,11 @@ Game2.prototype = {
 							}
 						);
 				}
+			}).catch((err) => {
+				console.log(err);
+				alert("Something seems off. Please reload.");
+				window.location.reload();
+
 			});
 		} else {
 			window.location.reload();

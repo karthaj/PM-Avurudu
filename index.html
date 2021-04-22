@@ -3,6 +3,7 @@
 <!-- 
 	This is a property of Ashfaq Khajudeen 
  -->
+
 <head>
 	<meta charset="UTF-8" />
 	<link rel="shortcut icon" href="/assets/components/fav.png" type="image/x-icon">
@@ -10,9 +11,10 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Mali:wght@600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
-		
+		@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
 	</style>
+
+	
 	<script type="text/javascript" src="js/phaser.min.js"></script>
 	<script type="text/javascript" src="js/boot.js"></script>
 	<script type="text/javascript" src="js/preload.js"></script>
@@ -28,6 +30,7 @@
 	<script type="text/javascript" src="js/gameStart1.js"></script>
 	<script type="text/javascript" src="js/gameStart2.js"></script>
 	<script type="text/javascript" src="js/gameStart3.js"></script>
+	<script type="text/javascript" src="js/cred.js"></script>
 
 	<!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
 
@@ -42,15 +45,6 @@
 	<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
 
 	<script type="text/javascript">
-		var firebaseConfig = {
-			apiKey: "AIzaSyC_QlUMAi1n4MZehSMTRkSEPvDj_hy2ngA",
-			authDomain: "pickme-avurudu-game-3f969.firebaseapp.com",
-			projectId: "pickme-avurudu-game-3f969",
-			storageBucket: "pickme-avurudu-game-3f969.appspot.com",
-			messagingSenderId: "294814214618",
-			appId: "1:294814214618:web:cf690a81ac1f09bc8a38e3",
-			auth: { uid: window.localStorage.getItem('uid') }
-		};
 		// Initialize Firebase
 		firebase.initializeApp(firebaseConfig);
 	</script>
@@ -184,7 +178,7 @@
 				})();
 			else
 				if (window.localStorage.getItem('pickme-avurudu-game') != 1) {
-					window.localStorage.clear(); 
+					window.localStorage.clear();
 					eventFire(document.getElementById("btn-exit"), "click");
 					window.document.getElementById('login-btn').addEventListener(
 						'click', function () {
@@ -222,10 +216,10 @@
 
 				<div class="modal-body p-2 small ">
 					<div>
-						<h3 class="w-100 text-center muted my-2 py-0">Leader Board</h3>
+						<h3 class="w-100 text-center muted my-2 py-0">E-Avrudu Leader Board</h3>
 
-						<div class="align-items-baseline border d-flex form-group py-3 shadow-sm"
-							style="border-radius: 10px; height: 250px; background: linear-gradient(180deg, #e3ffe7 0%, #d9e7ff 100%);"
+						<div class="align-items-end border d-flex form-group py-3 shadow-sm"
+							style="border-radius: 10px; height: 220px; background: linear-gradient(180deg, #e3ffe7 0%, #d9e7ff 100%);"
 							id="top-ranks">
 						</div>
 

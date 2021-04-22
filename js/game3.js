@@ -240,6 +240,10 @@ Game3.prototype = {
 							}
 						);
 				}
+			}).catch((err) => {
+				console.log(err);
+				alert("Something seems off. Please reload.");
+				window.location.reload();
 			});
 		} else {
 			window.location.reload();
