@@ -49,7 +49,7 @@ MainMenu.prototype = {
 
 		var scoreFont = "25px Mali";
 
-		this.game.add.text(this.game.world.centerX - 125, this.game.world.height - 70, "Powerd by PickMe Engineering", { font: "20px Mali", fill: "#000" });
+		this.game.add.text(this.game.world.centerX - 165, this.game.world.height - 70, "Powered by PickMe Engineering", { font: "20px Mali", fill: "#000" });
 
 		this.scoreLabel = this.game.add.text(this.game.world.centerX, this.game.world.height / 2.355, "", { font: scoreFont, fill: "#4f3e00" });
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
@@ -64,10 +64,10 @@ MainMenu.prototype = {
 		this.greetText.text = "සුභ අලුත් අවුරුද්දක් වේවා!\n" + NAME;
 		this.scoreLabel.text = "Your ⭐ is " + (window.localStorage.getItem('overall_score') == null ? 0 : parseInt(window.localStorage.getItem('overall_score') / 100));
 
-		game.add.button(game.world.centerX - 150, this.game.world.height / 2.75 + 85, 'btn_obstacle', this.startGame1, this, 1, 0, 0);
-		game.add.button(game.world.centerX - 170, this.game.world.height / 2.75 + 160, 'btn_elephant', this.startGame2, this, 1, 0, 0);
-		game.add.button(game.world.centerX - 150, this.game.world.height / 2.75 + 240, 'btn_grease', this.startGame3, this, 1, 0, 0);
-		game.add.button(game.world.centerX - 125, this.game.world.height / 2.75 + 320, 'btn_leader_board', this.populateBoard, this, 1, 0, 0);
+		game.add.button(game.world.centerX - 130, this.game.world.height / 2.75 + 85, 'btn_obstacle', this.startGame1, this, 1, 0, 0).scale.setTo(0.75);
+		game.add.button(game.world.centerX - 130, this.game.world.height / 2.75 + 160, 'btn_elephant', this.startGame2, this, 1, 0, 0).scale.setTo(0.75);
+		game.add.button(game.world.centerX - 130, this.game.world.height / 2.75 + 240, 'btn_grease', this.startGame3, this, 1, 0, 0).scale.setTo(0.75);
+		game.add.button(game.world.centerX - 125, this.game.world.height / 2.75 + 320, 'btn_leader_board', this.populateBoard, this, 1, 0, 0).scale.setTo(0.75);
 
 		this.scoreLabel.bringToTop();
 
@@ -81,7 +81,7 @@ MainMenu.prototype = {
 
 	addButtons: function () {
 
-		game.add.button(15, 275, 'btn_exit', this.exit, this, 1, 0);
+		game.add.button(13, 275, 'btn_exit', this.exit, this, 1, 0);
 
 		this.mute = game.add.button(10, 175, 'btn_mute', this.soundIt, this, 1, 0);
 		this.mute.visible = false;
@@ -136,10 +136,10 @@ MainMenu.prototype = {
 					querySnapshot.forEach((doc) => {
 						if (doc.id == UID && i > 3) {
 							console.log(doc.data()["uid"]);
-							profile = [i, doc.data()["name"], parseInt(doc.data()["total"] / 100), doc.data()["dp"],];
+							profile = [i, doc.data()["name"], parseInt(doc.data()["total"]), doc.data()["dp"],];
 						}
 
-						data.push([i++, doc.data()["name"], parseInt(doc.data()["total"] / 100), doc.data()["dp"],]);
+						data.push([i++, doc.data()["name"], parseInt(doc.data()["total"] ), doc.data()["dp"],]);
 					});
 
 					if (data.length < 3) {
@@ -147,35 +147,37 @@ MainMenu.prototype = {
 						return;
 					}
 
+					var split = (e)=>e.split(' ')[0]
 
 					document.getElementById("top-ranks").innerHTML =
 						`<div class="col-4 text-center">
 						<img src="${data[1][3]}"
-							class="border shadow-sm rounded-circle" width="65%" alt="${data[1][1]}">
+							class="border shadow-sm rounded-circle" width="80%" alt="${data[1][1]}" style="border:7px solid #A5A5A5 !important">
 						<img src="/assets/components/silver.png"
-							style="position: absolute;top: 31%;right: 13%;width: 50px;" alt="silver">
-						<h6 class="text-primary">
-							${data[1][1]}
+							style="position: absolute;top: 36%;right: 13%;width: 60px;" alt="silver" >
+						<h6 class="text-primary text-center">
+							${split(data[1][1])}
 						</h6>
 						<h6>⭐${data[1][2]}</h6>
 					</div>
 					<div class="col-4 text-center">
 						<img src="${data[0][3]}"
-							class="border  shadow-sm rounded-circle" width="100%" alt="${data[0][1]}"><img
+							class="border  shadow-sm rounded-circle" width="100%" alt="${data[0][1]}" style="border:7px solid #FFB300 !important">
+							<img
 							src="/assets/components/gold.png"
-							style="position: absolute;top: 43%;right: 13%;width: 50px;" alt="silver">
-						<h6 class="text-primary">
-							${data[0][1]}
+							style="position: absolute;top: 42%;right: 7%;width: 60px;" alt="silver">
+						<h6 class="text-primary text-center">
+							${split(data[0][1])}
 						</h6>
 						<h6>⭐${data[0][2]}</h6>
 					</div>
 					<div class="col-4 text-center">
 						<img src="${data[2][3]}"
-							class="border  shadow-sm rounded-circle" width="65%" alt="${data[2][1]}"><img
+							class="border  shadow-sm rounded-circle" width="80%" alt="${data[2][1]}" style="border:7px solid #B86300 !important"><img
 							src="/assets/components/bronze.png"
-							style="position: absolute;top: 31%;right: 13%;width: 50px;" alt="silver">
-						<h6 class="text-primary">
-							${data[2][1]}
+							style="position: absolute;top: 36%;right: 13%;width: 60px;" alt="silver" >
+						<h6 class="text-primary text-center">
+							${split(data[2][1])}
 						</h6>
 						<h6>⭐${data[2][2]}</h6>
 					</div>`;

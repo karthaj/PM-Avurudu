@@ -18,10 +18,11 @@ Preload.prototype = {
 		this.game.load.audio('bgm', '/assets/audio/bgm.mp3');
 
 		// // buttons 
-		this.game.load.spritesheet('btn_elephant', '/assets/components/aliya_301x86.png', 301, 86);
-		this.game.load.spritesheet('btn_obstacle', '/assets/components/goni_261x81.png', 261, 81);
-		this.game.load.spritesheet('btn_grease', '/assets/components/grease_239x89.png', 296, 89);
-		this.game.load.spritesheet('btn_leader_board', '/assets/components/leader_239x119.png', 239, 119);
+		this.game.load.spritesheet('btn_elephant', '/assets/components/btn-aliya.png',313,132);
+		this.game.load.spritesheet('btn_obstacle', '/assets/components/btn-goni.png', 313,132);
+		this.game.load.spritesheet('btn_grease', '/assets/components/btn-grease.png', 313,132);
+		this.game.load.spritesheet('btn_leader_board', '/assets/components/btn-leader.png', 303,152);
+
 		this.game.load.spritesheet('sun', '/assets/components/sun.png', 551.2, 552);
 		this.game.load.spritesheet('bird', '/assets/components/bird.png', 241, 250);
 		this.game.load.spritesheet('logo', '/assets/components/logo.png', 360, 360);
@@ -57,6 +58,7 @@ Preload.prototype = {
 		// Game 2 
 		this.game.load.image('board', 'assets/components/board.png', 193, 71);
 		this.game.load.image('chalk', '/assets/components/chalk.png');
+		this.game.load.image('bg-aliya', '/assets/images/bg/aliya-back-ground.png');
 		this.game.load.image('timeline', '/assets/components/timeline.png');
 		this.game.load.image('timeline-bg', '/assets/components/timeline-bg.png');
 		this.game.load.image('eye', '/assets/components/eye.png',);
