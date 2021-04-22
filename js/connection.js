@@ -15,10 +15,13 @@ function googleProvider() {
         var token = credential.accessToken; 
 
 
-        localStorage.setItem("dpURL", result.user.photoURL) 
-        localStorage.setItem("uid", result.user.uid)
-        localStorage.setItem("name", result.user.displayName)
-        localStorage.setItem("email", result.user.email)
+        localStorage.setItem("dpURL", result.user.photoURL) ;
+        localStorage.setItem("uid", result.user.uid);
+        localStorage.setItem("name", result.user.displayName);
+        localStorage.setItem("email", result.user.email);
+        window.localStorage.setItem("game_1", 0);
+        window.localStorage.setItem("game_2", 0);
+        window.localStorage.setItem("game_3", 0);
 				window.location.reload();
          
         // ...

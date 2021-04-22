@@ -22,9 +22,7 @@ Game2.prototype = {
 		this.bgm = game.add.audio('bgm');
 		this.switch = game.add.audio('switch');
 		var whisile = game.add.audio('whisile');
-		this.bgm.volume = 0.5;
-		game.sound.setDecodedCallback([this.click, this.mark, this.bgm, this.whisile, this.switch], this.addButtons, this);
-
+		this.bgm.volume = 0.5; 
 
 		var bg_t = game.add.image(0, 0, "timeline-bg");
 		this.progress = game.add.image(0, 0, "timeline");
@@ -51,54 +49,45 @@ Game2.prototype = {
 		this.addButtons();
 
 		this.game.time.events.loop(10, this.decrementerScore, this);
-		this.game.time.events.loop(38000, this.bgm.play(), this);
+		this.game.time.events.loop(38000, this.bgms, this);
 
-		var popup = this.game.add.sprite(0, 0, "popup");
-
-		this.game.input.keyboard.onPressCallback = function (aa) {
-
-			if (aa === " " && game.paused) {
-				popup.destroy();
-				game.paused = false;
-				whisile.play();
-			}
-
-			else if (aa === "esc" && game.paused) {
-				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
-			}
-
-		};
-
-		this.game.paused = true;
-
+		whisile.play(); 
+		this.bgm.play();
 
 	},
 	addButtons: function () {
 
-		game.add.button(20, 100, 'btn_home',
+		game.add.button(20, 0, 'btn_home',
 			() => {
 				this.stopSounds(); this.click.play(); this.game.state.start('MainMenu');
 			}, this, 1, 2);
 
-		this.mute = game.add.button(20, 200, 'btn_mute', this.soundIt, this, 1, 0);
+		this.mute = game.add.button(20, 100, 'btn_mute', this.soundIt, this, 1, 0);
 		this.mute.visible = false;
 
-		this.sound = game.add.button(20, 200, 'btn_sound', this.muteIt, this, 1, 0);
+		this.sound = game.add.button(20, 100, 'btn_sound', this.muteIt, this, 1, 0);
 	},
 
-	muteIt: function () {
-		this.sound.visible = false;
-		this.mute.visible = true;
-		this.click.play();
-		this.bgm.pause();
+	bgms: function () {
+		if (this.sound.visible)
+			this.bgm.play();
+		else
+			this.bgm.pause();
 	},
-
 	soundIt: function () {
 		this.mute.visible = false;
 		this.sound.visible = true;
 		this.click.play();
 		this.bgm.play();
 	},
+
+	muteIt: function () {
+		this.sound.visible = false;
+		this.mute.visible = true;
+		this.bgm.pause();
+	},
+
+
 	stopSounds: function () {
 		this.click.pause();
 		this.mark.pause();
@@ -163,7 +152,7 @@ Game2.prototype = {
 			}
 			tries--;
 
-			if (!(tries < 0))
+			if (!(tries < 0) && this.alive)
 				this.chalks.children[tries].alpha = .40;
 
 			if (tries == 0) {
@@ -217,17 +206,21 @@ Game2.prototype = {
 	},
 
 	postScore: function () {
-		this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
-			if (doc.exists) {
-				const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(this.perc)
-				this.db.collection("pm_user").doc(localStorage.getItem('uid'))
-					.update(
-						{
-							[`games.g_2`]: parseInt(score) + parseInt(doc.data()['games'][`g_2`]),
-							total: _total
-						}
-					);
-			}
-		});
+		if (window.localStorage.getItem("uid") != null) {
+			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
+				if (doc.exists) {
+					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(this.perc)
+					this.db.collection("pm_user").doc(localStorage.getItem('uid'))
+						.update(
+							{
+								[`games.g_2`]: parseInt(score) + parseInt(doc.data()['games'][`g_2`]),
+								total: _total
+							}
+						);
+				}
+			});
+		} else {
+			window.location.reload();
+		}
 	}
 }
