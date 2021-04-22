@@ -136,10 +136,10 @@ MainMenu.prototype = {
 					querySnapshot.forEach((doc) => {
 						if (doc.id == UID && i > 3) {
 							console.log(doc.data()["uid"]);
-							profile = [i, doc.data()["name"], parseInt(doc.data()["total"]), doc.data()["dp"],];
+							profile = [i, doc.data()["name"], parseInt(doc.data()["total"]/100), doc.data()["dp"],];
 						}
 
-						data.push([i++, doc.data()["name"], parseInt(doc.data()["total"] ), doc.data()["dp"],]);
+						data.push([i++, doc.data()["name"], parseInt(doc.data()["total"]/100 ), doc.data()["dp"],]);
 					});
 
 					if (data.length < 3) {
