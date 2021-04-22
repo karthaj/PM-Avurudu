@@ -220,14 +220,18 @@ Game1.prototype = {
 		this.player.body.gravity.y = 8200;
 		this.player.body.collideWorldBounds = true;
 		this.player.body.bounce.y = 0.1;
-		this.player.body.width = 30;
-		this.player.body.offset.x = 40;
+		this.player.body.width = 60;
+		this.player.body.offset.x = 25; 
 
 		this.player.animations.add('jog', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 23, true);
 		this.player.animations.add('jump', [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,], 18, true);
 		this.player.animations.add('hurt', [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41], 30, true);
 
 		this.player.play('hurt');
+	},
+
+	render:function(){
+this.game.debug.body(this.player)
 	},
 
 	createScore: function () {
