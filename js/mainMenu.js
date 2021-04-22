@@ -58,15 +58,14 @@ MainMenu.prototype = {
 		this.scoreLabel.anchor.setTo(0.5, 0.5);
 		this.scoreLabel.align = 'center';
 		this.game.world.bringToTop(this.scoreLabel);
-		this.scoreLabel.text = "Your ⭐ is " + (window.localStorage.getItem('overall_score') == null ? 0 : parseInt(window.localStorage.getItem('overall_score') / 100));
-
+		 
 		this.greetText = this.game.add.text(this.game.world.centerX, this.game.world.height / 2.9, "", { font: scoreFont, fill: "#000" });
 		this.greetText.anchor.setTo(0.5, 0.5);
 		this.greetText.align = 'center';
 		this.game.world.bringToTop(this.greetText);
 
 		this.greetText.text = "සුභ අලුත් අවුරුද්දක් වේවා!\n" + NAME;
-
+		this.scoreLabel.text = "Your ⭐ is " + (window.localStorage.getItem('overall_score') == null ? 0 : parseInt(window.localStorage.getItem('overall_score') / 100));
 
 		game.add.button(game.world.centerX - 130, this.game.world.height / 2.75 + 85, 'btn_obstacle', this.startGame1, this, 1, 0, 0).scale.setTo(0.75);
 		game.add.button(game.world.centerX - 130, this.game.world.height / 2.75 + 160, 'btn_elephant', this.startGame2, this, 1, 0, 0).scale.setTo(0.75);
