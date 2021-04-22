@@ -3,15 +3,19 @@
 
 <head>
 	<meta charset="UTF-8" />
-	<link rel="shortcut icon" href="/assets/components/fav.png" type="image/x-icon">  
+	<link rel="shortcut icon" href="/assets/components/fav.png" type="image/x-icon">
 	<title>PickMe Avurudu Game</title>
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Mali:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
+		
 	</style>
 	<script type="text/javascript" src="js/phaser.min.js"></script>
 	<script type="text/javascript" src="js/boot.js"></script>
-	<script type="text/javascript" src="js/preload.js"></script> 
+	<script type="text/javascript" src="js/preload.js"></script>
+	<script type="text/javascript" src="js/mainMenu.js"></script>
+	<script type="text/javascript" src="js/connection.js"></script>
 	<script type="text/javascript" src="js/game1.js"></script>
 	<script type="text/javascript" src="js/game2.js"></script>
 	<script type="text/javascript" src="js/game3.js"></script>
@@ -19,8 +23,9 @@
 	<script type="text/javascript" src="js/gameOver1.js"></script>
 	<script type="text/javascript" src="js/gameOver2.js"></script>
 	<script type="text/javascript" src="js/gameOver3.js"></script>
-	<script type="text/javascript" src="js/mainMenu.js"></script>
-	<script type="text/javascript" src="js/connection.js"></script>
+	<script type="text/javascript" src="js/gameStart1.js"></script>
+	<script type="text/javascript" src="js/gameStart2.js"></script>
+	<script type="text/javascript" src="js/gameStart3.js"></script>
 
 	<!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
 
@@ -51,7 +56,7 @@
 		body {
 			overflow: hidden;
 
-		} 
+		}
 
 		::-webkit-scrollbar {
 			width: 5px;
@@ -91,23 +96,72 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
 		integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
 		crossorigin="anonymous"></script>
- 
+
 </head>
 
 <body class="center">
+
+
+	<!-- Button trigger modal -->
+	<button type="button" class=" d-none btn btn-primary" data-toggle="modal" id="btn-exit"
+		data-target="#exit"></button>
+
+	<!-- Modal -->
+	<div class="modal fade" id="exit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-body p-2  ">
+
+					<div class="modal-header text-center ">
+						<img class="m-auto p-0 m-0" src="/assets/images/bg/E-Awrudu-Logo.png" width="300">
+
+					</div>
+					<p class="  m-auto  text-center">Powerd by <strong class="text-center text-danger">PickMe
+							Engineering</strong></p>
+
+					<div class="modal-body text-center ">
+
+						<h5 class="modal-title m-auto" style="font-family: mali ;">
+							Please login via G-Mail to
+							participate <br>
+							<strong>PickMe E-Avurudu</strong>
+						</h5>
+					</div>
+
+					<div class="modal-footer row justify-content-center  border-0">
+						<button type="button" class="btn btn-success " id="login-btn">Login</button>
+						<button type="button" class="btn btn-secondary" onclick="window.location.reload()"
+							data-dismiss="modal">close</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
 
 	<!-- The core Firebase JS SDK is always required and must be listed first -->
 
 	<div>
 
 		<script type="text/javascript">
+			function eventFire(el, etype) {
+				if (el.fireEvent) {
+					el.fireEvent("on" + etype);
+				} else {
+					var evObj = document.createEvent("Events");
+					evObj.initEvent(etype, true, false);
+					el.dispatchEvent(evObj);
+				}
 
+			}
 			if (localStorage.getItem('pickme-avurudu-game') == 1 && localStorage.getItem('name') != null)
 				(function () {
 
 					//Create a new game that fills the screen
 					game = new Phaser.Game(1280, 900, Phaser.CANVAS);
 					//Add all states
+					// Stretch to fill
 					game.state.add("Boot", Boot);
 					game.state.add("Preload", Preload);
 					game.state.add("MainMenu", MainMenu);
@@ -118,23 +172,34 @@
 					game.state.add("Game1", Game1);
 					game.state.add("Game3", Game3);
 					game.state.add("Game2", Game2);
+					game.state.add("StartGame1", StartGame1);
+					game.state.add("StartGame3", StartGame3);
+					game.state.add("StartGame2", StartGame2);
 					//Start the first state
 					game.state.start("Boot");
 
+
 				})();
 			else
-				if (localStorage.getItem('pickme-avurudu-game') != 1) {
-					localStorage.clear();
-
-					alert("Please login to play")
-					localStorage.setItem('pickme-avurudu-game', 1)
-					googleSignInPopup(googleProvider());
-
+				if (window.localStorage.getItem('pickme-avurudu-game') != 1) {
+					window.localStorage.clear(); 
+					eventFire(document.getElementById("btn-exit"), "click");
+					window.document.getElementById('login-btn').addEventListener(
+						'click', function () {
+							window.localStorage.setItem('pickme-avurudu-game', 1)
+							googleSignInPopup(googleProvider());
+						}
+					)
 				} else {
 					if (localStorage.getItem('name') == null) {
-						localStorage.setItem('pickme-avurudu-game', 1)
-						googleSignInPopup(googleProvider());
+						eventFire(document.getElementById("btn-exit"), "click");
 
+						window.document.getElementById('login-btn').addEventListener(
+							'click', function () {
+								window.localStorage.setItem('pickme-avurudu-game', 1)
+								googleSignInPopup(googleProvider());
+							}
+						)
 					}
 				}
 
@@ -145,10 +210,10 @@
 	</div>
 	<!-- Button trigger modal -->
 	<button type="button" class=" d-none btn btn-primary" data-toggle="modal" id="btn"
-		data-target="#exampleModal"></button>
+		data-target="#leaderboard"></button>
 
 	<!-- Modal -->
-	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	<div class="modal fade" id="leaderboard" tabindex="-1" role="dialog" aria-labelledby="leaderboard"
 		aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -162,7 +227,7 @@
 							id="top-ranks">
 						</div>
 
-						<h6 class="w-100 text-center muted" id="my-rank">You rank is</h6>
+						<h6 class="w-100 text-center muted my-1" id="my-rank">You rank is</h6>
 
 						<div id="user-rank" class="form-group form-row mx-2 py-2 px-1 border-0  shadow-sm "
 							style="border-radius: 10px;background-image: linear-gradient(180deg, #fcf4dd 0%, #fffbe7 100%); box-shadow: 0px 2px 8px 2px #000000;">
@@ -175,6 +240,8 @@
 
 			</div>
 		</div>
+	</div>
+
 </body>
 
 </html>
