@@ -277,6 +277,8 @@ Game1.prototype = {
 								total: _total
 							}
 						);
+					window.localStorage.getItem('overall_score', _total)
+
 				}
 			}).catch((err) => {
 				console.log(err);

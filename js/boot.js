@@ -62,7 +62,7 @@ Boot.prototype = {
 				};
 
 				if (window.localStorage.getItem("uid") != null) {
-					firebase.firestore().collection("pm_user").doc(window.localStorage.getItem('uid')).set(userDate).then(e => this.scoreLabel.text = "Finnishing up . . .");
+					firebase.firestore().collection("pm_user").doc(window.localStorage.getItem('uid')).set(userDate).then(e => this.scoreLabel.text = "Finishing up . . .");
 				} else {
 					window.location.reload();
 				}

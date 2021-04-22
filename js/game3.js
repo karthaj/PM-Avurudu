@@ -22,7 +22,7 @@ Game3.prototype = {
 		this.cheer = game.add.audio('cheer');
 		this.cheer.volume = 0.3; var whisile = game.add.audio('whisile');
 		this.bgm = game.add.audio('bgm');
-		this.bgm.volume = 0.5; 
+		this.bgm.volume = 0.5;
 
 		var bg = game.add.image(0, -30, "bg-3");
 		game.add.tween(bg).to(
@@ -239,6 +239,8 @@ Game3.prototype = {
 								total: _total
 							}
 						);
+
+					window.localStorage.getItem('overall_score', _total)
 				}
 			}).catch((err) => {
 				console.log(err);
