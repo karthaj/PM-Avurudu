@@ -16,7 +16,8 @@ Game2.prototype = {
 		this.game.add.image(0, 0, 'bg-aliya');
 		tries = 3;
 		score = 0;
-
+		this.scoreDiv = 1;
+		
 		// Sound for the buttons
 		this.click = game.add.audio('click');
 		this.mark = game.add.audio('mark');
@@ -106,9 +107,10 @@ Game2.prototype = {
 
 				this.board = game.add.sprite(Math.floor(Math.random() * (50 - 1 + 1) + 0), 200, 'board');
 				this.board.scale.setTo(1.5);
- 
+
 
 				if (_total > 50000) {
+					this.scoreDiv = 5;
 
 					this.board.x = (this.game.world.width / Math.floor(Math.random() * (4 - 1 + 1) + 2));
 
@@ -245,12 +247,12 @@ Game2.prototype = {
 		if (window.localStorage.getItem("uid") != null) {
 			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
 				if (doc.exists) {
-					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(this.perc)
+					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(this.perc / this.scoreDiv)
 					window.localStorage.setItem(`overall_score`, _total);
 					this.db.collection("pm_user").doc(localStorage.getItem('uid'))
 						.update(
 							{
-								[`games.g_2`]: parseInt(score) + parseInt(doc.data()['games'][`g_2`]),
+								[`games.g_2`]: parseInt(score / this.scoreDiv) + parseInt(doc.data()['games'][`g_2`]),
 								total: _total
 							}
 						);
