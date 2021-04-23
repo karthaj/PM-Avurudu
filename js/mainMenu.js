@@ -10,8 +10,7 @@ MainMenu.prototype = {
 		this.click = game.add.audio('click');
 		this.open = game.add.audio('open');
 		this.bgm = game.add.audio('bgm');
-		this.bgm.volume = 0.7;
-
+		this.bgm.volume = 0.7; 
 		this.game.stage.backgroundColor = 'ffe8a3';
 		this.game.stage.backgroundColor = '000000';
 
@@ -38,7 +37,7 @@ MainMenu.prototype = {
 
 		this.game.time.events.loop(38000, this.bgms, this);
 		this.game.time.events.loop(5000, this.setScore, this);
-		this.bgms();
+	 
 	},
 
 	setScore: function () {
