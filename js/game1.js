@@ -125,8 +125,7 @@ Game1.prototype = {
 		// Crouch!
 		else if (!onTheGround && this.cursors.down.isDown && this.alive) {
 			this.player.body.velocity.y = 1200;
-			this.click.play();
-
+	
 		}
 		else if (onTheGround && this.alive) {
 
