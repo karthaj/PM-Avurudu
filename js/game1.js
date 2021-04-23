@@ -12,37 +12,10 @@ Game1.prototype = {
 		this.alive = true;
 		this.obstacleVelocity = -700;
 		this.rate = 1500;
-		this.inc = 0;
+		this.inc = 5;
 		score = 0;
 
-		if (window.localStorage.getItem("uid") != null) {
-			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
-				var _total = 0;
-				if (doc.exists) {
-					_total = (parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(score)) / 100;
-				}
-				if (_total > 40000) {
-					this.inc = 1;
-				} else if (_total > 30000) {
-					this.inc = 1.5;
-				} else if (_total > 20000) {
-					this.inc = 2;
-				} else if (_total > 10000) {
-					this.inc = 2.5;
-				} else {
-					this.inc = 3;
-				}
-
-
-			}).catch(
-				(err) => {
-					console.log(err);
-				}
-			)
-		} else {
-			window.localStorage.clear();
-			window.location.reload();
-		}
+		
 
 
 
