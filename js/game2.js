@@ -108,7 +108,7 @@ Game2.prototype = {
 				this.board.scale.setTo(1.5);
  
 
-				if (_total > 30000) {
+				if (_total > 50000) {
 
 					this.board.x = (this.game.world.width / Math.floor(Math.random() * (4 - 1 + 1) + 2));
 
