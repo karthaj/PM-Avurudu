@@ -37,7 +37,7 @@ MainMenu.prototype = {
 
 		this.game.time.events.loop(38000, this.bgms, this);
 		this.game.time.events.loop(5000, this.setScore, this);
-	 
+	 	this.bgms();
 	},
 
 	setScore: function () {
