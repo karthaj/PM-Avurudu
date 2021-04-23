@@ -9,7 +9,6 @@ GameOver1.prototype = {
 		game.add.image(0, 0, "game-over");
 
 		this.click = game.add.audio('click');
-		game.sound.setDecodedCallback([this.click], this.showScore, this);
 
 		this.showScore();
 	},

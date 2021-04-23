@@ -8,10 +8,43 @@ Game1.prototype = {
 
 		this.db = firebase.firestore();
 
+
 		this.alive = true;
 		this.obstacleVelocity = -700;
 		this.rate = 1500;
+		this.inc = 0;
 		score = 0;
+
+		if (window.localStorage.getItem("uid") != null) {
+			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
+				var _total = 0;
+				if (doc.exists) {
+					_total = (parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(score)) / 100;
+				}
+				if (_total > 40000) {
+					this.inc = 1;
+				} else if (_total > 30000) {
+					this.inc = 1.5;
+				} else if (_total > 20000) {
+					this.inc = 2;
+				} else if (_total > 10000) {
+					this.inc = 2.5;
+				} else {
+					this.inc = 3;
+				}
+
+
+			}).catch(
+				(err) => {
+					console.log(err);
+				}
+			)
+		} else {
+			window.localStorage.clear();
+			window.location.reload();
+		}
+
+
 
 		// Sound for the buttons
 		this.click = game.add.audio('click');
@@ -69,6 +102,7 @@ Game1.prototype = {
 		whisile.play();
 
 		this.cheers();
+		this.bgms();
 
 	},
 
@@ -112,7 +146,6 @@ Game1.prototype = {
 		else if (score > 500) {
 			this.obsPlacer.delay = Math.floor(Math.random() * (1000 - 900)) + 900;
 		}
-		game.debug.body(this.boxes)
 
 	},
 
@@ -221,17 +254,13 @@ Game1.prototype = {
 		this.player.body.collideWorldBounds = true;
 		this.player.body.bounce.y = 0.1;
 		this.player.body.width = 60;
-		this.player.body.offset.x = 25; 
+		this.player.body.offset.x = 25;
 
 		this.player.animations.add('jog', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 23, true);
 		this.player.animations.add('jump', [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,], 18, true);
 		this.player.animations.add('hurt', [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41], 30, true);
 
 		this.player.play('hurt');
-	},
-
-	render:function(){
-this.game.debug.body(this.player)
 	},
 
 	createScore: function () {
@@ -248,8 +277,8 @@ this.game.debug.body(this.player)
 
 	incrementScore: function () {
 		if (this.alive) {
-			score += 1;
-			this.scoreLabel.setText(score);
+			score += this.inc;
+			this.scoreLabel.setText(parseInt(score));
 			this.game.world.bringToTop(this.scoreLabel);
 		}
 	},
@@ -274,15 +303,15 @@ this.game.debug.body(this.player)
 			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
 				if (doc.exists) {
 					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(score);
-					this.db.collection("pm_user").doc(localStorage.getItem('uid'))
+					window.localStorage.setItem(`overall_score`, _total);
+						this.db.collection("pm_user").doc(localStorage.getItem('uid'))
 						.update(
 							{
 								[`games.g_1`]: parseInt(score) + parseInt(doc.data()['games'][`g_1`]),
 								total: _total
 							}
 						);
-					window.localStorage.getItem('overall_score', _total)
-
+				
 				}
 			}).catch((err) => {
 				console.log(err);

@@ -22,7 +22,7 @@ Game2.prototype = {
 		this.mark = game.add.audio('mark');
 		this.bgm = game.add.audio('bgm');
 		this.switch = game.add.audio('switch');
-		var whisile = game.add.audio('whisile');
+		this.whisile = game.add.audio('whisile');
 		this.bgm.volume = 0.5;
 
 		var bg_t = game.add.image(0, 0, "timeline-bg");
@@ -44,9 +44,7 @@ Game2.prototype = {
 
 		// Board 
 		this.createBoard();
-		this.createBlinder();
 
-		this.blinder.play('initiate');
 		// this.blinder.play('blindIt');   
 		this.cursors = this.game.input.keyboard.createCursorKeys();
 
@@ -55,7 +53,6 @@ Game2.prototype = {
 		this.game.time.events.loop(10, this.decrementerScore, this);
 		this.game.time.events.loop(38000, this.bgms, this);
 
-		whisile.play();
 		this.bgm.play();
 
 	},
@@ -98,22 +95,58 @@ Game2.prototype = {
 		this.bgm.pause();
 	},
 	createBoard: function () {
-		this.board = game.add.sprite(Math.floor(Math.random() * (50 - 1 + 1) + 0), 200, 'board');
 
-		this.board.scale.setTo(1.5);
-		this.board.x = (this.game.world.width / Math.floor(Math.random() * (7 - 1 + 1) + 2));
 
-		this.boardShake_x = game.add.tween(this.board).to(
-			{ rotation: 0.05, x: (this.game.world.centerX / Math.floor(Math.random() * (8 - 1 + 1) + 2) * 2) }, Math.floor(Math.random() * (745 - 1 + 1) + 596), "Sine.easeInOut", true, 0, -1, true);
-		this.boardShake_y = game.add.tween(this.board).to(
-			{ rotation: 0.099, y: this.board.y + Math.floor(Math.random() * (20 - 1 + 1) + 10) }, Math.floor(Math.random() * (517 - 1 + 1) + 421), "Sine.easeInOut", true, 0, -1, true);
+		if (window.localStorage.getItem("uid") != null) {
+			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
+				var _total = 0;
+				if (doc.exists) {
+					_total = (parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(score)) / 100;
+				}
 
-		this.board.inputEnabled = true;
-		this.board.input.pixelPerfectOver = true;
-		this.board.input.useHandCursor = true;
+				this.board = game.add.sprite(Math.floor(Math.random() * (50 - 1 + 1) + 0), 200, 'board');
+				this.board.scale.setTo(1.5);
+ 
 
-		this.board.events.onInputDown.add(this.setEyeMark, this);
+				if (_total > 30000) {
 
+					this.board.x = (this.game.world.width / Math.floor(Math.random() * (4 - 1 + 1) + 2));
+
+					this.boardShake_x = game.add.tween(this.board).to(
+						{ rotation: 0.05, x: (this.game.world.centerX / Math.floor(Math.random() * (8 - 1 + 1) + 2) * 2) }, Math.floor(Math.random() * (745 - 1 + 1) + 596), "Sine.easeInOut", true, 0, -1, true);
+					this.boardShake_y = game.add.tween(this.board).to(
+						{ rotation: 0.099, y: this.board.y + Math.floor(Math.random() * (20 - 1 + 1) + 10) }, Math.floor(Math.random() * (517 - 1 + 1) + 421), "Sine.easeInOut", true, 0, -1, true);
+
+				} else {
+
+					this.board.x = (this.game.world.width / 10);
+
+					this.boardShake_x = game.add.tween(this.board).to({ x: (this.game.world.width / 6 * 2) }, 945, "Sine.easeInOut", true, 0, -1, true);
+
+					this.boardShake_y = game.add.tween(this.board).to({ y: this.board.y + 30 }, 617, "Sine.easeInOut", true, 0, -1, true);
+				}
+
+				this.board.inputEnabled = true;
+				this.board.input.pixelPerfectOver = true;
+				this.board.input.useHandCursor = true;
+
+				this.board.events.onInputDown.add(this.setEyeMark, this);
+
+				this.createBlinder();
+				this.blinder.play('initiate');
+				this.whisile.play();
+
+
+
+			}).catch(
+				(err) => {
+					console.log(err);
+				}
+			)
+		} else {
+			window.localStorage.clear();
+			window.location.reload();
+		}
 	},
 
 	setEyeMark: function (e) {
@@ -201,7 +234,7 @@ Game2.prototype = {
 
 		this.alive = false;
 		this.postScore();
-		this.stopSounds(); 
+		this.stopSounds();
 		setTimeout(() => {
 			this.game.state.start('GameOver2');
 		}, 1500);
@@ -212,14 +245,16 @@ Game2.prototype = {
 		if (window.localStorage.getItem("uid") != null) {
 			this.db.collection("pm_user").doc(window.localStorage.getItem('uid')).get().then(doc => {
 				if (doc.exists) {
-					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(this.perc / 2)
+					const _total = parseInt(doc.data()['games'][`g_1`]) + parseInt(doc.data()['games'][`g_2`]) + parseInt(doc.data()['games'][`g_3`]) + parseInt(this.perc)
+					window.localStorage.setItem(`overall_score`, _total);
 					this.db.collection("pm_user").doc(localStorage.getItem('uid'))
 						.update(
 							{
-								[`games.g_2`]: parseInt(score/2) + parseInt(doc.data()['games'][`g_2`]),
+								[`games.g_2`]: parseInt(score) + parseInt(doc.data()['games'][`g_2`]),
 								total: _total
 							}
 						);
+
 				}
 			}).catch((err) => {
 				console.log(err);
