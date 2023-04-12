@@ -1,5 +1,5 @@
 # Avurudu Game
-This is a simple web-based game application that was designed and developed to celebrate the Sinhala and Tamil New Year festival virtually during the COVID-19 pandemic. This game application was built for internal use within the organization, PickMe (Digital Mobility Solutions Lanka (PVT) Ltd).
+This is a simple web-based game application that was designed and developed to celebrate the [Sinhala and Tamil New Year](https://en.wikipedia.org/wiki/Sinhalese_New_Year) festival virtually during the COVID-19 pandemic. This game application was built for internal use within the organization, [PickMe - Digital Mobility Solutions Lanka (PVT) Ltd](https://pickme.lk/).
 
 ## Purpose
 The purpose of this project was to create a fun and interactive experience for employees to enjoy the [Avurudu](https://en.wikipedia.org/wiki/Sinhalese_New_Year) festival feast and games from the comfort of their own homes.
