@@ -13,11 +13,11 @@ The game application consists of three traditional Sri Lankan games (Slightly mo
  
 
 ## Technologies Used
-The game application was developed using [Phaser](https://phaser.io/) the following technologies:
+The game application was developed using [Phaser](https://phaser.io/) integrateing following technologies:
 
 1. HTML
 2. CSS
-3. JavaScript
+3. TypeScript
 4. Bootstrap 
 ## Contribution
 This game application was developed by Ashfak Khajudeen alis Karthaj. If you find any issues or bugs, please feel free to raise an issue. Contributions are also welcome.
